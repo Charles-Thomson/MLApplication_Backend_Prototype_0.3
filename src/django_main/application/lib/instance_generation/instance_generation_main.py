@@ -6,32 +6,18 @@ from operator import attrgetter
 
 from functools import partial
 
-from application.lib.environment.environment_factory import (
+from src.django_main.application.lib.environment.environment_factory import (
     EnvironmentFactory,
 )
-from application.lib.agent_brain.static_state_brain import BrainInstance
+from src.django_main.application.lib.agent_brain.static_state_brain import BrainInstance
 
-from application.lib.agent.agent_generator import new_agent_generator
+from src.django_main.application.lib.agent.agent_generator import new_agent_generator
 
-from application.lib.instance_generation.config_formatting import (
+from src.django_main.application.lib.instance_generation.config_formatting import (
     format_instance_config,
     format_ann_config,
     format_env_config,
 )
-
-
-# from src.application.logging.logging_deco import (
-#     with_brain_logging,
-#     with_fitness_threshold_logging,
-# )
-
-
-# TODO: Implement ref to movement i.e 0 = UL , 1 = U ect ect
-
-# TODO: Instance generation:
-# Need to save the highest fitness brain from each instance run
-
-# TODO: Set up the Django DB model to store the highest fitness from each instance
 
 
 class Learning_Instance:

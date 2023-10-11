@@ -3,9 +3,9 @@ from copy import deepcopy
 from typing import Generator
 
 
-from application.lib.agent_brain.brain_factory import BrainFactory
+from src.django_main.application.lib.agent_brain.brain_factory import BrainFactory
 
-from application.lib.agent.agent_factory import AgentFactory
+from src.django_main.application.lib.agent.agent_factory import AgentFactory
 
 
 def new_agent_generator(
@@ -18,21 +18,15 @@ def new_agent_generator(
 ) -> Generator:
     """Test"""
     for _ in range(max_generation_size):
+        ann_config["current_generation_number"] = current_generation_number
+
         this_brain_type = "generational_weighted_brain"
 
         if current_generation_number == 0:
             this_brain_type = "random_weighted_brain"
 
-        # print(
-        #     "in agent generator, gen number: {}, parents: {}".format(
-        #         current_generation_number, parents
-        #     )
-        # )
         agent_brain: object = BrainFactory.make_brain(
-            brain_type=this_brain_type,
-            ann_config=ann_config,
-            parents=parents,
-            current_generation_number=current_generation_number,
+            brain_type=this_brain_type, ann_config=ann_config, parents=parents
         )
 
         new_env = deepcopy(environment)

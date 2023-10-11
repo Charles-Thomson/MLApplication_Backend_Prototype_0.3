@@ -5,7 +5,20 @@ import random
 import uuid
 import numpy as np
 
-from application.lib.agent_brain.static_state_brain import BrainInstance
+from src.django_main.application.lib.agent_brain.static_state_brain import BrainInstance
+
+from src.django_main.application.lib.neural_network.generational_functions.generational_functions_factory import (
+    GenerationalFunctionsFactory,
+)
+from src.django_main.application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
+    HiddenLayerActvaitionFactory,
+)
+from src.django_main.application.lib.neural_network.output_layer_activation_functions.output_layer_functions_factory import (
+    OutputLayerActvaitionFactory,
+)
+from src.django_main.application.lib.neural_network.weight_huristics.weight_huristics_factory import (
+    WeightHuristicsFactory,
+)
 
 
 # TODO: Refactor to allow easy access for converting db model to brain instance
@@ -14,15 +27,22 @@ class BrainFactory:
 
     brain_types = {}
 
+    # TODO: Test the setting of the dafault parents to empty
     @classmethod
     def make_brain(
         cls,
-        current_generation_number: int,
         brain_type,
         ann_config: dict,
-        parents: list[BrainInstance],
+        parents: list[BrainInstance] = None,
     ):
         """Generate the brain based of given type"""
+
+        try:
+            cls.set_callable_brain_functions(ann_config=ann_config)
+
+        except KeyError as err:
+            raise ValueError("The function_ref file is not valid") from err
+
         try:
             retreval = cls.brain_types[brain_type]
 
@@ -30,10 +50,42 @@ class BrainFactory:
             raise NotImplementedError(f"{brain_type} Not implemented") from err
 
         return retreval(
-            current_generation_number=current_generation_number,
             ann_config=ann_config,
             parents=parents,
         )
+
+    @classmethod
+    def set_callable_brain_functions(cls, ann_config: dict) -> dict:
+        """
+        Set the functions used in the BrainInstance based on the function referances in the config
+        var: ann_config - brain config file
+        rtn ann_config - brain config file post functions being set
+        """
+        ann_config["funcations_callable"][
+            "weight_init_huristic"
+        ] = WeightHuristicsFactory.get_huristic(
+            ann_config["functions_ref"]["weight_init_huristic"]
+        )
+
+        ann_config["funcations_callable"][
+            "hidden_activation_func"
+        ] = HiddenLayerActvaitionFactory.get_hidden_activation_func(
+            ann_config["functions_ref"]["hidden_activation_func"]
+        )
+
+        ann_config["funcations_callable"][
+            "output_activation_func"
+        ] = OutputLayerActvaitionFactory.get_output_activation_func(
+            ann_config["functions_ref"]["output_activation_func"]
+        )
+
+        ann_config["funcations_callable"][
+            "new_generation_func"
+        ] = GenerationalFunctionsFactory.get_generation_func(
+            ann_config["functions_ref"]["new_generation_func"]
+        )
+
+        return ann_config
 
     @classmethod
     def register(cls, type_name):
@@ -55,13 +107,15 @@ def generate_brain_id() -> str:
 
 @BrainFactory.register("generational_weighted_brain")
 def new_generational_weighted_brain(
-    ann_config: dict, parents: list[BrainInstance], current_generation_number
+    ann_config: dict, parents: list[BrainInstance]
 ) -> BrainInstance:
     """Generate a new generationally weighted brain"""
 
     MUTATION_THRESHOLD: int = 50
 
-    new_generation_function: callable = ann_config["new_generation_func"]
+    new_generation_function: callable = ann_config["funcations_callable"][
+        "new_generation_func"
+    ]
 
     val: int = len(parents)
     weightings: list[float] = tuple(val / i for i in range(1, val + 1))
@@ -94,7 +148,6 @@ def new_generational_weighted_brain(
 
     return BrainInstance(
         brain_config=ann_config,
-        current_generation_number=current_generation_number,
     )
 
 
@@ -122,9 +175,7 @@ def apply_mutation(weight_set: np.array) -> np.array:
 
 
 @BrainFactory.register("random_weighted_brain")
-def new_random_weighted_brain(
-    current_generation_number: int, ann_config: dict, parents: list
-) -> BrainInstance:
+def new_random_weighted_brain(ann_config: dict, parents: list) -> BrainInstance:
     """Generate a randomly weighted brain"""
 
     hidden_weights: np.array = initialize_weights(
@@ -143,7 +194,6 @@ def new_random_weighted_brain(
     ann_config["brain_id"] = generate_brain_id()
 
     return BrainInstance(
-        current_generation_number=current_generation_number,
         brain_config=ann_config,
     )
 
