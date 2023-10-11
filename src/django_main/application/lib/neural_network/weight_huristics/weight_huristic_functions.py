@@ -2,7 +2,7 @@ from math import sqrt
 import numpy as np
 from numpy.random import randn, rand
 
-from src.django_main.application.lib.neural_network.weight_huristics.weight_huristics_factory import (
+from application.lib.neural_network.weight_huristics.weight_huristics_factory import (
     WeightHuristicsFactory,
 )
 

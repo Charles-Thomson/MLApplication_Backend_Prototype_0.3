@@ -6,8 +6,19 @@ from django.http import HttpResponse
 
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
-
+from database.model_data_formatting import (
+    brain_instance_to_model,
+    model_to_brain_instance,
+)
 from database.models import BrainInstanceModel
+
+
+# for testing
+from application.lib.instance_generation.instance_generation_main import (
+    format_ann_config,
+)
+
+from application.lib.agent_brain.brain_factory import BrainFactory
 
 # Create your views here.
 
@@ -16,9 +27,6 @@ def index(request):
     return HttpResponse("Hello, world. You're at the database index.")
 
 
-# TODO: Work out the import for the BrainInstance
-# TODO: Test the conversion from brain to model instance
-# TODO: Test saving the model instance
 # TODO: test converting the instance back to a brain instance
 # TODO: Work out the testing of the above
 
@@ -26,32 +34,36 @@ def index(request):
 # python manage.py makesuperuser
 # run tests from top level folder
 
+test_ann_config: dict = {
+    "weight_init_huristic": "he_weight",
+    "hidden_activation_func": "linear_activation_function",
+    "output_activation_func": "argmax_activation",
+    "new_generation_func": "crossover_weights_average",
+    "input_to_hidden_connections": "(24,9)",
+    "hidden_to_output_connections": "(9,9)",
+}
+foramtted_test_config = format_ann_config(ann_config=test_ann_config)
+
 
 # @require_http_methods(["POST"])
 def add_all(request):
     """Add a new Brain Instance"""
 
-    brain_type = "general"
-    brain_id = "2"
-    generation_num = "test number 0"
-    hidden_weights = "[5,6,7,8]"
-    output_weights = "[5,6,7,8]"
+    test_brain_type: str = "random_weighted_brain"
+    parents: list = []
 
-    brain_type = bytes(brain_type, encoding="utf-8")
-    brain_id = bytes(brain_id, encoding="utf-8")
-    generation_num = bytes(generation_num, encoding="utf-8")
-    hidden_weights = bytes(hidden_weights, encoding="utf-8")
-    output_weights = bytes(output_weights, encoding="utf-8")
-
-    new_brain_instance = BrainInstanceModel(
-        brain_type=brain_type,
-        brain_id=brain_id,
-        generation_num=generation_num,
-        hidden_weights=hidden_weights,
-        output_weights=output_weights,
+    test_brain = BrainFactory.make_brain(
+        current_generation_number=0,
+        brain_type=test_brain_type,
+        ann_config=foramtted_test_config,
+        parents=parents,
     )
 
-    new_brain_instance.save()
+    brain_instance_as_model = brain_instance_to_model(
+        brain_instance=test_brain, model_type="general"
+    )
+
+    brain_instance_as_model.save()
     return HttpResponse("Item should be added to the DB")
 
 
@@ -60,4 +72,6 @@ def get_instance(request) -> None:
 
     brain_model: BrainInstanceModel = BrainInstanceModel.objects.get(id=2)
 
-    return HttpResponse(f"Returned: {brain_model} from the database")
+    rtn_brain_instance = model_to_brain_instance(brain_model)
+
+    return HttpResponse(f"Returned: {rtn_brain_instance} from the database")

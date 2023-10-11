@@ -5,9 +5,10 @@ import random
 import uuid
 import numpy as np
 
-from src.django_main.application.lib.agent_brain.static_state_brain import BrainInstance
+from application.lib.agent_brain.static_state_brain import BrainInstance
 
 
+# TODO: Refactor to allow easy access for converting db model to brain instance
 class BrainFactory:
     """Factory for generations fo brains"""
 

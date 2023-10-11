@@ -5,7 +5,7 @@ Cross over weight functions used to generate new generation weights
 import random
 import numpy as np
 
-from src.django_main.application.lib.neural_network.generational_functions.generational_functions_factory import (
+from application.lib.neural_network.generational_functions.generational_functions_factory import (
     GenerationalFunctionsFactory,
 )
 

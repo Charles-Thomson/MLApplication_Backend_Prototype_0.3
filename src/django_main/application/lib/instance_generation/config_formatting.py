@@ -2,16 +2,16 @@
 import numpy as np
 
 
-from src.django_main.application.lib.neural_network.generational_functions.generational_functions_factory import (
+from application.lib.neural_network.generational_functions.generational_functions_factory import (
     GenerationalFunctionsFactory,
 )
-from src.django_main.application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
+from application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
     HiddenLayerActvaitionFactory,
 )
-from src.django_main.application.lib.neural_network.output_layer_activation_functions.output_layer_functions_factory import (
+from application.lib.neural_network.output_layer_activation_functions.output_layer_functions_factory import (
     OutputLayerActvaitionFactory,
 )
-from src.django_main.application.lib.neural_network.weight_huristics.weight_huristics_factory import (
+from application.lib.neural_network.weight_huristics.weight_huristics_factory import (
     WeightHuristicsFactory,
 )
 
@@ -48,6 +48,9 @@ def format_ann_config(ann_config: dict) -> dict:
         "hidden_to_output_connections": "",
         "brain_type": "",
         "brain_id": "",
+        "fitness": 0.0,
+        "traversed_path": [],
+        "fitness_by_step": [],
     }
 
     this_ann_confg["brain_id"] = ""
@@ -71,6 +74,7 @@ def format_ann_config(ann_config: dict) -> dict:
         ann_config["new_generation_func"]
     )
 
+    # TODO: Refactor out the use of eval
     this_ann_confg["input_to_hidden_connections"]: tuple[int, int] = eval(
         ann_config["input_to_hidden_connections"]
     )

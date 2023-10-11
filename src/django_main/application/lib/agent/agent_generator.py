@@ -3,9 +3,9 @@ from copy import deepcopy
 from typing import Generator
 
 
-from src.django_main.application.lib.agent_brain.brain_factory import BrainFactory
+from application.lib.agent_brain.brain_factory import BrainFactory
 
-from src.django_main.application.lib.agent.agent_factory import AgentFactory
+from application.lib.agent.agent_factory import AgentFactory
 
 
 def new_agent_generator(
