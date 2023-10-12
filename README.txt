@@ -1,0 +1,1 @@
+Running tests should be done from within the Django_main package

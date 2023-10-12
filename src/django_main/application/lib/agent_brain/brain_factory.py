@@ -4,19 +4,20 @@ from copy import deepcopy
 import random
 import uuid
 import numpy as np
+import json
 
-from src.django_main.application.lib.agent_brain.static_state_brain import BrainInstance
+from application.lib.agent_brain.static_state_brain import BrainInstance
 
-from src.django_main.application.lib.neural_network.generational_functions.generational_functions_factory import (
+from application.lib.neural_network.generational_functions.generational_functions_factory import (
     GenerationalFunctionsFactory,
 )
-from src.django_main.application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
+from application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
     HiddenLayerActvaitionFactory,
 )
-from src.django_main.application.lib.neural_network.output_layer_activation_functions.output_layer_functions_factory import (
+from application.lib.neural_network.output_layer_activation_functions.output_layer_functions_factory import (
     OutputLayerActvaitionFactory,
 )
-from src.django_main.application.lib.neural_network.weight_huristics.weight_huristics_factory import (
+from application.lib.neural_network.weight_huristics.weight_huristics_factory import (
     WeightHuristicsFactory,
 )
 
@@ -61,25 +62,31 @@ class BrainFactory:
         var: ann_config - brain config file
         rtn ann_config - brain config file post functions being set
         """
-        ann_config["funcations_callable"][
+
+        ann_config["functions_ref"] = eval(ann_config["functions_ref"])
+
+        print(ann_config["functions_ref"])
+        print(type(ann_config["functions_ref"]))
+
+        ann_config["functions_callable"][
             "weight_init_huristic"
         ] = WeightHuristicsFactory.get_huristic(
             ann_config["functions_ref"]["weight_init_huristic"]
         )
 
-        ann_config["funcations_callable"][
+        ann_config["functions_callable"][
             "hidden_activation_func"
         ] = HiddenLayerActvaitionFactory.get_hidden_activation_func(
             ann_config["functions_ref"]["hidden_activation_func"]
         )
 
-        ann_config["funcations_callable"][
+        ann_config["functions_callable"][
             "output_activation_func"
         ] = OutputLayerActvaitionFactory.get_output_activation_func(
             ann_config["functions_ref"]["output_activation_func"]
         )
 
-        ann_config["funcations_callable"][
+        ann_config["functions_callable"][
             "new_generation_func"
         ] = GenerationalFunctionsFactory.get_generation_func(
             ann_config["functions_ref"]["new_generation_func"]
@@ -105,6 +112,20 @@ def generate_brain_id() -> str:
     return brain_id
 
 
+@BrainFactory.register("base_brain_instance")
+def base_brain_instance(ann_config: dict, parents: list) -> BrainInstance:
+    """
+    Return a generic brain instance
+    usage - Converting a models.Model back to a brain instance
+    var: ann_config - the config file of the brin instnce
+    var: parents - not used
+    rnt: A new Brain Instance
+    """
+    return BrainInstance(
+        brain_config=ann_config,
+    )
+
+
 @BrainFactory.register("generational_weighted_brain")
 def new_generational_weighted_brain(
     ann_config: dict, parents: list[BrainInstance]
@@ -113,7 +134,7 @@ def new_generational_weighted_brain(
 
     MUTATION_THRESHOLD: int = 50
 
-    new_generation_function: callable = ann_config["funcations_callable"][
+    new_generation_function: callable = ann_config["functions_callable"][
         "new_generation_func"
     ]
 
@@ -141,8 +162,8 @@ def new_generational_weighted_brain(
         if random_selection == 1:
             new_hidden_to_output_weights = apply_mutation(new_hidden_to_output_weights)
 
-    ann_config["hidden_weights"] = new_input_to_hidden_weight
-    ann_config["output_weights"] = new_hidden_to_output_weights
+    ann_config["weights"]["hidden_weights"] = new_input_to_hidden_weight
+    ann_config["weights"]["output_weights"] = new_hidden_to_output_weights
 
     ann_config["brain_id"] = generate_brain_id()
 
@@ -180,16 +201,16 @@ def new_random_weighted_brain(ann_config: dict, parents: list) -> BrainInstance:
 
     hidden_weights: np.array = initialize_weights(
         layer_connections=ann_config["input_to_hidden_connections"],
-        weight_heuristic=ann_config["weight_init_huristic"],
+        weight_heuristic=ann_config["functions_callable"]["weight_init_huristic"],
     )
 
     output_weights: np.array = initialize_weights(
         layer_connections=ann_config["hidden_to_output_connections"],
-        weight_heuristic=ann_config["weight_init_huristic"],
+        weight_heuristic=ann_config["functions_callable"]["weight_init_huristic"],
     )
 
-    ann_config["hidden_weights"] = hidden_weights
-    ann_config["output_weights"] = output_weights
+    ann_config["weights"]["hidden_weights"] = hidden_weights
+    ann_config["weights"]["output_weights"] = output_weights
 
     ann_config["brain_id"] = generate_brain_id()
 

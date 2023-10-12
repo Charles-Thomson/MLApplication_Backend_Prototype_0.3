@@ -1,6 +1,6 @@
 """Hidden layer acivation fuctions"""
 import numpy as np
-from src.django_main.application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
+from application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
     HiddenLayerActvaitionFactory,
 )
 

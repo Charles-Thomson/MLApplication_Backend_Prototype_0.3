@@ -41,9 +41,7 @@ class BrainInstanceModel(models.Model):
     output_weights = models.BinaryField()
     traversed_path = models.CharField(max_length=350, default="[]")
     fitness_by_step = models.CharField(max_length=350, default="[]")
-    hidden_layer_activation_func = models.FloatField()
-    output_layer_activation_func = models.FloatField()
-    new_generation_func = models.FloatField()
+    functions_ref = models.CharField(max_length=350, default={})
 
     # svg_path = models.CharField(max_length=350, default="")
     # svg_start = models.CharField(max_length=350, default="")

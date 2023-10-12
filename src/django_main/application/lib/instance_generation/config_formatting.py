@@ -2,16 +2,16 @@
 import numpy as np
 
 
-from src.django_main.application.lib.neural_network.generational_functions.generational_functions_factory import (
+from application.lib.neural_network.generational_functions.generational_functions_factory import (
     GenerationalFunctionsFactory,
 )
-from src.django_main.application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
+from application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
     HiddenLayerActvaitionFactory,
 )
-from src.django_main.application.lib.neural_network.output_layer_activation_functions.output_layer_functions_factory import (
+from application.lib.neural_network.output_layer_activation_functions.output_layer_functions_factory import (
     OutputLayerActvaitionFactory,
 )
-from src.django_main.application.lib.neural_network.weight_huristics.weight_huristics_factory import (
+from application.lib.neural_network.weight_huristics.weight_huristics_factory import (
     WeightHuristicsFactory,
 )
 
@@ -57,26 +57,27 @@ def format_ann_config(ann_config: dict) -> dict:
             "output_activation_func": "",
             "new_generation_func": "",
         },
-        "funcations_callable": {
+        "functions_callable": {
             "weight_init_huristic": "",
             "hidden_activation_func": "",
             "output_activation_func": "",
             "new_generation_func": "",
         },
+        "weights": {"hidden_weights": "", "output_weights": ""},
     }
 
     formatted_ann_config["brain_id"] = ""
 
-    formatted_ann_config["funcations_callable"]["weight_init_huristic"] = ann_config[
+    formatted_ann_config["functions_ref"]["weight_init_huristic"] = ann_config[
         "weight_init_huristic"
     ]
-    formatted_ann_config["funcations_callable"]["hidden_activation_func"] = ann_config[
+    formatted_ann_config["functions_ref"]["hidden_activation_func"] = ann_config[
         "hidden_activation_func"
     ]
-    formatted_ann_config["funcations_callable"]["output_activation_func"] = ann_config[
+    formatted_ann_config["functions_ref"]["output_activation_func"] = ann_config[
         "output_activation_func"
     ]
-    formatted_ann_config["funcations_callable"]["new_generation_func"] = ann_config[
+    formatted_ann_config["functions_ref"]["new_generation_func"] = ann_config[
         "new_generation_func"
     ]
 

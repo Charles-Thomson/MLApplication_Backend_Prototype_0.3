@@ -1,8 +1,8 @@
-from src.django_main.application.lib.instance_generation.instance_generation_main import (
+from application.lib.instance_generation.instance_generation_main import (
     new_instance,
 )
 
-from src.django_main.application.logging.logging_for_testing import (
+from application.logging.logging_for_testing import (
     with_test_brian_logging,
 )
 

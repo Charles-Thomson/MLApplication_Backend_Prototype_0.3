@@ -3,11 +3,11 @@ import json
 from functools import partial
 import numpy as np
 
-from src.django_main.application.lib.environment.environment_protocol import (
+from application.lib.environment.environment_protocol import (
     EnvironemntProtocol,
 )
 
-from src.django_main.application.lib.environment.environment_observation.static_state_observation import (
+from application.lib.environment.environment_observation.static_state_observation import (
     static_state_observation,
 )
 

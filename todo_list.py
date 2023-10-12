@@ -1,13 +1,12 @@
-# TODO: Issue with model -> instance due to the way the instaces are created
-# May need to create a new instance type in brain factory ?
-# Or make changes to how the brains are constructed - move generational func out of the config ?
-# Need to generally rething the gneration procees of agents and brains as it's complicated and not easy to test
+# TODO NEXT
+# Start testing the DB elements inc:
+# Saving to the DB
+# Getting rom the DB and changing back to a Brain Instance
 
-# idea
-# have a build config for the building of a brain, then a json/dict storing the needed functions
+# Handling of the current_generation var for each instance
+# This is now stored in the config fo each instance
 
+# Write tests for the new setting of the brain_config/ann_config
+# Also fix the naming of this var as it is confusing
 
-# TODO Next
-# Work out the depth of file when calling testing
-# this will be different to the depth when calling django runserver so may cause issues
-# Mabtbe set it to work around the django calls?
+# Work out a better solution to the EVAL in the brain_factory - not a workable long term solution

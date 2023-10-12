@@ -6,14 +6,14 @@ from operator import attrgetter
 
 from functools import partial
 
-from src.django_main.application.lib.environment.environment_factory import (
+from application.lib.environment.environment_factory import (
     EnvironmentFactory,
 )
-from src.django_main.application.lib.agent_brain.static_state_brain import BrainInstance
+from application.lib.agent_brain.static_state_brain import BrainInstance
 
-from src.django_main.application.lib.agent.agent_generator import new_agent_generator
+from application.lib.agent.agent_generator import new_agent_generator
 
-from src.django_main.application.lib.instance_generation.config_formatting import (
+from application.lib.instance_generation.config_formatting import (
     format_instance_config,
     format_ann_config,
     format_env_config,

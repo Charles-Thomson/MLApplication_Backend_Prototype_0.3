@@ -5,30 +5,30 @@ import numpy as np
 class BrainInstance:
     """Instance of agent brian"""
 
-    def __init__(self, current_generation_number, brain_config: dict) -> None:
+    def __init__(self, brain_config: dict) -> None:
         """Setup the core elements of the brain"""
 
         # TODO: These elements need to be added to the config
         self.fitness: float = brain_config["fitness"]
         self.traversed_path: list[tuple] = brain_config["traversed_path"]
         self.fitness_by_step: list[float] = brain_config["fitness_by_step"]
-        self.current_generation_number: int = current_generation_number
+        self.current_generation_number: int = brain_config["current_generation_number"]
 
         self.brain_type = brain_config["brain_type"]
         self.brain_id: str = brain_config["brain_id"]
 
         self.hidden_layer_activation_func: callable = brain_config[
-            "funcations_callable"
+            "functions_callable"
         ]["hidden_activation_func"]
         self.output_layer_activation_func: callable = brain_config[
-            "funcations_callable"
+            "functions_callable"
         ]["output_activation_func"]
 
         # working on this
-        self.hidden_weights: np.array = brain_config["hidden_weights"]
-        self.output_weights: np.array = brain_config["output_weights"]
+        self.hidden_weights: np.array = brain_config["weights"]["hidden_weights"]
+        self.output_weights: np.array = brain_config["weights"]["output_weights"]
 
-        self.functions_refs: dict = brain_config["functions_ref"]
+        self.functions_ref: dict = brain_config["functions_ref"]
 
         # self.svg_path: str = ""
         # self.svg_start: str = ""

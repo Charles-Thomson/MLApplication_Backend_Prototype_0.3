@@ -1,15 +1,15 @@
 """Testing elements of the static state environement"""
 import pytest
 
-from src.django_main.application.lib.environment.environment_factory import (
+from application.lib.environment.environment_factory import (
     EnvironmentFactory,
 )
 
-from src.django_main.application.lib.instance_generation.instance_generation_main import (
+from application.lib.instance_generation.instance_generation_main import (
     format_env_config,
 )
 
-from src.django_main.application.lib.environment.environment_factory import (
+from application.lib.environment.environment_factory import (
     StaticStateEnvironemnt,
 )
 

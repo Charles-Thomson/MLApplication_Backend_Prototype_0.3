@@ -1,14 +1,14 @@
 """Testing the configuation of an enviroment once it hs been created"""
 
-from src.django_main.application.lib.environment.environment_factory import (
+from application.lib.environment.environment_factory import (
     StaticStateEnvironemnt,
 )
 
-from src.django_main.application.lib.environment.environment_factory import (
+from application.lib.environment.environment_factory import (
     EnvironmentFactory,
 )
 
-from src.django_main.application.lib.instance_generation.instance_generation_main import (
+from application.lib.instance_generation.instance_generation_main import (
     format_env_config,
 )
 

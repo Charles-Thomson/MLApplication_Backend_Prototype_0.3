@@ -45,18 +45,16 @@ test_ann_config: dict = {
 foramtted_test_config = format_ann_config(ann_config=test_ann_config)
 
 
+# Currently using test brains ect
 # @require_http_methods(["POST"])
 def add_all(request):
     """Add a new Brain Instance"""
 
     test_brain_type: str = "random_weighted_brain"
-    parents: list = []
 
     test_brain = BrainFactory.make_brain(
-        current_generation_number=0,
         brain_type=test_brain_type,
         ann_config=foramtted_test_config,
-        parents=parents,
     )
 
     brain_instance_as_model = brain_instance_to_model(

@@ -2,12 +2,12 @@
 from typing import Generator
 import pytest
 
-from src.django_main.application.lib.instance_generation.instance_generation_main import (
+from application.lib.instance_generation.instance_generation_main import (
     new_instance,
 )
-from src.django_main.application.lib.agent.agent_factory import StaticStateMazeAgent
+from application.lib.agent.agent_factory import StaticStateMazeAgent
 
-from src.django_main.application.lib.agent_brain.static_state_brain import BrainInstance
+from application.lib.agent_brain.static_state_brain import BrainInstance
 
 test_config = {
     "env_type": "Static_State",
