@@ -29,7 +29,7 @@ class DatabaseModelsFactory:
         return deco
 
 
-# TODO: Test the factory approach of Get model
+@DatabaseModelsFactory.register("general")
 class BrainInstanceModel(models.Model):
     """Model for the Brain Instances"""
 
@@ -46,17 +46,3 @@ class BrainInstanceModel(models.Model):
     # svg_path = models.CharField(max_length=350, default="")
     # svg_start = models.CharField(max_length=350, default="")
     # svg_end = models.CharField(max_length=350, default="")
-
-
-def get_model(model_type: str) -> models.Model:
-    """Return a given model -
-    Available:
-    "general"
-    "fit"
-    "trained"
-    """
-
-    model: dict[str, models.Model] = {
-        "general": BrainInstanceModel,
-    }
-    return model[model_type]

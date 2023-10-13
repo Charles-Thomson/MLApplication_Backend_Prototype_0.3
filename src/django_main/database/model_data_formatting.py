@@ -1,17 +1,18 @@
-import numpy as np
-from database.models import get_model
 import json
+import numpy as np
+
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
 from application.lib.agent_brain.brain_factory import BrainFactory
+
+from database.models import DatabaseModelsFactory
 
 
 def brain_instance_to_model(brain_instance: object, model_type: str) -> BrainInstance:
     """Save the brain instance as a fit instance"""
 
-    model = get_model(model_type=model_type)
-
-    # brain_instance.set_attributes_to_bytes()
+    # TODO: Move away from hard coded model_type
+    model = DatabaseModelsFactory.get_model(model_type="general")
 
     # TODO: refactor this into func ? - clean up ect
     hidden_weights: bytes = brain_instance.hidden_weights.tobytes()

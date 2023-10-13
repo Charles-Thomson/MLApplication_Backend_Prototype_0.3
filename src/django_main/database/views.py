@@ -45,6 +45,7 @@ foramtted_test_config = format_ann_config(ann_config=test_ann_config)
 def add_all(request):
     """Add a new Brain Instance"""
 
+    # Move this to testing
     test_brain_type: str = "random_weighted_brain"
 
     test_brain = BrainFactory.make_brain(
