@@ -20,15 +20,10 @@ from application.lib.instance_generation.instance_generation_main import (
 
 from application.lib.agent_brain.brain_factory import BrainFactory
 
-# Create your views here.
-
 
 def index(request):
     return HttpResponse("Hello, world. You're at the database index.")
 
-
-# TODO: test converting the instance back to a brain instance
-# TODO: Work out the testing of the above
 
 # python manage.py makemigrations
 # python manage.py makesuperuser
@@ -71,5 +66,7 @@ def get_instance(request) -> None:
     brain_model: BrainInstanceModel = BrainInstanceModel.objects.get(id=2)
 
     rtn_brain_instance = model_to_brain_instance(brain_model)
+
+    # print(rtn_brain_instance)
 
     return HttpResponse(f"Returned: {rtn_brain_instance} from the database")

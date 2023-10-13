@@ -1,4 +1,5 @@
 """Instance of a brain used by a agent"""
+import json
 import numpy as np
 
 
@@ -8,7 +9,6 @@ class BrainInstance:
     def __init__(self, brain_config: dict) -> None:
         """Setup the core elements of the brain"""
 
-        # TODO: These elements need to be added to the config
         self.fitness: float = brain_config["fitness"]
         self.traversed_path: list[tuple] = brain_config["traversed_path"]
         self.fitness_by_step: list[float] = brain_config["fitness_by_step"]
@@ -24,7 +24,6 @@ class BrainInstance:
             "functions_callable"
         ]["output_activation_func"]
 
-        # working on this
         self.hidden_weights: np.array = brain_config["weights"]["hidden_weights"]
         self.output_weights: np.array = brain_config["weights"]["output_weights"]
 
@@ -45,19 +44,3 @@ class BrainInstance:
         output_layer_dot_product = np.dot(hidden_layer_activation, self.output_weights)
 
         return self.output_layer_activation_func(output_layer_dot_product)
-
-    def set_attributes_to_bytes(self) -> None:
-        """Covert the np.arrays to bytes for DB storage"""
-
-        self.hidden_weights = self.hidden_weights.tobytes()
-        self.output_weights = self.output_weights.tobytes()
-        self.traversed_path = ",".join(str(val) for val in self.traversed_path)
-        self.fitness_by_step = ",".join(str(val) for val in self.fitness_by_step)
-
-    def get_attributes_from_bytes(self) -> None:
-        """Convert the weights from bytes to np.arrays"""
-
-        self.hidden_weights = np.frombuffer(self.hidden_weights).reshape(24, -1)
-        self.output_weights = np.frombuffer(self.output_weights).reshape(9, -1)
-        self.traversed_path = self.traversed_path.split(",")
-        self.fitness_by_step = self.fitness_by_step.split(",")

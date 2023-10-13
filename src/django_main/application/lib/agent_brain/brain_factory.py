@@ -28,7 +28,6 @@ class BrainFactory:
 
     brain_types = {}
 
-    # TODO: Test the setting of the dafault parents to empty
     @classmethod
     def make_brain(
         cls,
@@ -62,11 +61,6 @@ class BrainFactory:
         var: ann_config - brain config file
         rtn ann_config - brain config file post functions being set
         """
-
-        ann_config["functions_ref"] = eval(ann_config["functions_ref"])
-
-        print(ann_config["functions_ref"])
-        print(type(ann_config["functions_ref"]))
 
         ann_config["functions_callable"][
             "weight_init_huristic"

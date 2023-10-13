@@ -103,9 +103,6 @@ def test_get_highest_fitness(parent_data, learning_instance) -> None:
     assert highest_fitness_brain_instance.fitness == number_of_test_brains - 1
 
 
-# TODO: Finish tests for instance learning instance
-
-
 def test_run_generation(learning_instance, agent_generator) -> None:
     """
     Test the running of a full generation
