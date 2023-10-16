@@ -1,39 +1,41 @@
 import json
 import numpy as np
+import jsonpickle
 
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
 from application.lib.agent_brain.brain_factory import BrainFactory
 
 from database.models import DatabaseModelsFactory
+from rest_framework import serializers
+from database.models import BrainInstanceModel
+
+
+class ModelToBrainInstanceSerializer(serializers.ModelSerializer):
+    """
+    Serialize the model for model to instance
+
+    """
+
+    class Meta:
+        model = BrainInstanceModel
+        fields = "__all__"
 
 
 def brain_instance_to_model(brain_instance: object, model_type: str) -> BrainInstance:
     """Save the brain instance as a fit instance"""
 
-    # TODO: Move away from hard coded model_type
     model = DatabaseModelsFactory.get_model(model_type="general")
 
-    hidden_weights: bytes = brain_instance.hidden_weights.tolist()
-    output_weights: bytes = brain_instance.output_weights.tolist()
-
     weights_dict: dict = {
-        "hidden_weights": hidden_weights,
-        "output_weights": output_weights,
+        "hidden_weights": brain_instance.hidden_weights.tolist(),
+        "output_weights": brain_instance.output_weights.tolist(),
     }
 
-    functions_callable_dict: dict = {
-        "functions_callable": {
-            "weight_init_huristic": "",
-            "hidden_activation_func": "",
-            "output_activation_func": "",
-            "new_generation_func": "",
-        }
-    }
-
+    functions_callable_jsonpickle: json = jsonpickle.encode(
+        brain_instance.functions_callable
+    )
     weights_json = json.dumps(weights_dict)
-    functions_callable_json: json = json.dumps(functions_callable_dict)
-    functions_ref_json: json = json.dumps(brain_instance.functions_ref)
 
     traversed_path: str = ",".join(str(val) for val in brain_instance.traversed_path)
     fitness_by_step: str = ",".join(str(val) for val in brain_instance.fitness_by_step)
@@ -46,8 +48,7 @@ def brain_instance_to_model(brain_instance: object, model_type: str) -> BrainIns
         weights=weights_json,
         traversed_path=traversed_path,
         fitness_by_step=fitness_by_step,
-        functions_ref=functions_ref_json,
-        functions_callable=functions_callable_json
+        functions_callable=functions_callable_jsonpickle
         # svg_path=brain_instance.svg_path,
         # svg_start=brain_instance.svg_start,
         # svg_end=brain_instance.svg_end,
@@ -59,57 +60,69 @@ def brain_instance_to_model(brain_instance: object, model_type: str) -> BrainIns
 def model_to_brain_instance(brain_model) -> BrainInstance:
     """Convert a brain_model used by the DB to a Brain Instance"""
 
-    brain_config: dict = {
-        "brain_type": "base_brain_instance",
-        "brain_id": brain_model.brain_id,
-        "fitness": brain_model.fitness,
-        "traversed_path": brain_model.traversed_path,
-        "fitness_by_step": brain_model.fitness_by_step,
-        "current_generation_number": brain_model.current_generation_number,
-        "functions_ref": brain_model.functions_ref,
-        "functions_callable": brain_model.functions_callable,
-        "weights": brain_model.weights,
-    }
+    brain_config: dict = ModelToBrainInstanceSerializer(brain_model).data
 
-    brain_config: dict = get_instance_attributes_from_bytes(brain_config=brain_config)
+    brain_config: dict = set_config_attributes_format(brain_config=brain_config)
 
     new_brain_instance: BrainInstance = BrainFactory.make_brain(
         brain_type=brain_config["brain_type"],
         ann_config=brain_config,
     )
 
-    print(new_brain_instance.hidden_layer_activation_func)
+    print(new_brain_instance.functions_callable)
 
     return new_brain_instance
 
 
-def get_instance_attributes_from_bytes(brain_config: dict) -> dict:
+def set_config_attributes_format(brain_config: dict) -> dict:
     """
     Convert the attributes back to the origional fromat from bytes
     var: brain_config - config with some attributes in byte format
     rtn: brain_config - config with all attributes in origional format
     """
 
-    brain_config["weights"] = json.loads(brain_config["weights"])
-    brain_config["functions_ref"] = json.loads(brain_config["functions_ref"])
-    brain_config["functions_callable"] = json.loads(brain_config["functions_callable"])
+    brain_config["brain_type"] = "base_brain_instance"
 
-    print(brain_config["functions_callable"])
-    print(type(brain_config["functions_callable"]))
+    brain_config["weights"] = json.loads(brain_config["weights"])
+    brain_config["functions_callable"] = jsonpickle.decode(
+        brain_config["functions_callable"]
+    )
+
     brain_config["weights"]["hidden_weights"] = np.array(
         brain_config["weights"]["hidden_weights"]
     )
     brain_config["weights"]["output_weights"] = np.array(
         brain_config["weights"]["output_weights"]
     )
-
-    # brain_config["weights"]["hidden_weights"] = np.frombuffer(
-    #     brain_config["weights"]["hidden_weights"]
-    # ).reshape(24, -1)
-    # brain_config["weights"]["output_weights"] = np.frombuffer(
-    #     brain_config["weights"]["output_weights"]
-    # ).reshape(9, -1)
     brain_config["traversed_path"] = brain_config["traversed_path"].split(",")
     brain_config["fitness_by_step"] = brain_config["fitness_by_step"].split(",")
 
     return brain_config
+
+
+def gernation_to_model(generation_data: dict) -> json:
+    """
+    Set convert a given geenration i.e set of parents to a db model
+    var: generation_data - The given data for the generation
+    rtn: new_generation_model - generation data in a db model format
+    """
+
+    model = DatabaseModelsFactory.get_model(model_type="generation_storeage_model")
+
+    generations_parents_pickle: json = jsonpickle.encode(generation_data.parents)
+
+    new_generation_model = model(
+        generation_id=generate_generation_id(),
+        generation_number=generation_data["generation_number"],
+        average_fitness=generation_data["average_fitness"],
+        BrainInstance=generations_parents_pickle,
+    )
+
+    return new_generation_model
+
+
+def generate_generation_id() -> str:
+    """
+    Generate a generation models id
+    """
+    return "test-id"

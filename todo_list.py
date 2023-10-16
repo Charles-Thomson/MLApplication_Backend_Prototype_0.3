@@ -1,25 +1,31 @@
 # TODO NEXT
 
-# Test out Marshal to see if it can be used to turn the brain instance functions into/ out of JSON
-# this will then remove the need to have function refs - can just have callable
-# only need to be assigned once at point of creation - not on rebuild
+# Build the generation data config on the running of instance func
 
+# Add the var path to the URLS for the views - i.e the brain instance to be saved ect
 
-# Start testing the DB elements inc:
-# Saving to the DB
-# Getting from the DB and changing back to a Brain Instance
+# add generation_number to the brain instance model
+
+# Work out how each Brain instance is going to be saved to the DB -
+# New model for each instance ??
+
+# Save each generational run i.e all the parents from a generation to a db
+# Can serialize the who list of parents to make it easy with some extra details ect
+
+# make view functions to:
+# Get by generation number
+# get highest fitness per generation number
+# get longest path per generation
 
 # model_data_formatting is messy and needs to be refactored down
-
-# Look into refactoring model_to_brain_instance using a serializer
-# Removes the creation of the dict
-
-# Can a function be given to to the models.Model and then called by said model
-# i.e don't save the activation ect functions to a field ?
-
+# Clean up the config formats - need to match up the API to back end cofig files better
 
 # Handling of the current_generation var for each instance
 # This is now stored in the config fo each instance
 
 # Write tests for the new setting of the brain_config/ann_config
 # Also fix the naming of this var as it is confusing
+
+# IDEAS
+
+# Serialize/ picklejson the whole brain instance - just keep out the vars that want to be searchable

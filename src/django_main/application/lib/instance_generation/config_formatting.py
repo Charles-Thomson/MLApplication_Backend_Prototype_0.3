@@ -1,4 +1,5 @@
 """Formatting of the json config file to the appropriate format"""
+import json
 import numpy as np
 
 
@@ -39,6 +40,8 @@ def format_instance_config(config: dict) -> dict:
 
 # TODO: Rename the ann_config to barin config ??
 # Move the setting of the functions into the Brain_Factoy ?
+
+
 def format_ann_config(ann_config: dict) -> dict:
     """Format the ann config from dict[str:str] to dict[str:type]"""
 
@@ -51,41 +54,43 @@ def format_ann_config(ann_config: dict) -> dict:
         "traversed_path": [],
         "fitness_by_step": [],
         "current_generation_number": 0,
-        "functions_ref": {
-            "weight_init_huristic": "",
-            "hidden_activation_func": "",
-            "output_activation_func": "",
-            "new_generation_func": "",
-        },
         "functions_callable": {
-            "weight_init_huristic": "",
-            "hidden_activation_func": "",
-            "output_activation_func": "",
-            "new_generation_func": "",
+            "weight_init_huristic": callable,
+            "hidden_activation_func": callable,
+            "output_activation_func": callable,
+            "new_generation_func": callable,
         },
         "weights": {"hidden_weights": "", "output_weights": ""},
     }
 
     formatted_ann_config["brain_id"] = ""
 
-    formatted_ann_config["functions_ref"]["weight_init_huristic"] = ann_config[
+    formatted_ann_config["functions_callable"][
         "weight_init_huristic"
-    ]
-    formatted_ann_config["functions_ref"]["hidden_activation_func"] = ann_config[
-        "hidden_activation_func"
-    ]
-    formatted_ann_config["functions_ref"]["output_activation_func"] = ann_config[
-        "output_activation_func"
-    ]
-    formatted_ann_config["functions_ref"]["new_generation_func"] = ann_config[
-        "new_generation_func"
-    ]
+    ] = WeightHuristicsFactory.get_huristic(ann_config["weight_init_huristic"])
 
-    # TODO: Refactor out the use of eval
-    formatted_ann_config["input_to_hidden_connections"]: tuple[int, int] = eval(
+    formatted_ann_config["functions_callable"][
+        "hidden_activation_func"
+    ] = HiddenLayerActvaitionFactory.get_hidden_activation_func(
+        ann_config["hidden_activation_func"]
+    )
+
+    formatted_ann_config["functions_callable"][
+        "output_activation_func"
+    ] = OutputLayerActvaitionFactory.get_output_activation_func(
+        ann_config["output_activation_func"]
+    )
+
+    formatted_ann_config["functions_callable"][
+        "new_generation_func"
+    ] = GenerationalFunctionsFactory.get_generation_func(
+        ann_config["new_generation_func"]
+    )
+
+    formatted_ann_config["input_to_hidden_connections"]: list[int] = json.loads(
         ann_config["input_to_hidden_connections"]
     )
-    formatted_ann_config["hidden_to_output_connections"]: tuple[int, int] = eval(
+    formatted_ann_config["hidden_to_output_connections"]: list[int] = json.loads(
         ann_config["hidden_to_output_connections"]
     )
 

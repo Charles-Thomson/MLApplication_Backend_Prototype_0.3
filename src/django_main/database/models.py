@@ -38,12 +38,25 @@ class BrainInstanceModel(models.Model):
     brain_id = models.CharField(max_length=350)
     current_generation_number = models.CharField(max_length=350)
     fitness = models.CharField(max_length=350)
-    traversed_path = models.CharField(max_length=350, default="[]")
-    fitness_by_step = models.CharField(max_length=350, default="[]")
+    traversed_path = models.CharField(max_length=350, default=list)
+    fitness_by_step = models.CharField(max_length=350, default=list)
     weights = models.JSONField(default=dict)
-    functions_ref = models.JSONField(default=dict)
     functions_callable = models.JSONField(default=dict)
 
     # svg_path = models.CharField(max_length=350, default="")
     # svg_start = models.CharField(max_length=350, default="")
     # svg_end = models.CharField(max_length=350, default="")
+
+
+@DatabaseModelsFactory.register("generation_storeage_model")
+class GenerationInstanceModel(models.Model):
+    """
+    A model to store a full generation of BrainInstances
+    In the current version this strones a set of parents - i.e the "fit" instances
+    from a previous generation
+    """
+
+    generation_id = models.CharField(max_length=350)
+    generation_number = models.CharField(max_length=350)
+    average_fitness = models.CharField(max_length=350)
+    BrainInstance = models.JSONField(default=dict)

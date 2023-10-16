@@ -13,8 +13,8 @@ test_ann_config: dict = {
     "hidden_activation_func": "linear_activation_function",
     "output_activation_func": "argmax_activation",
     "new_generation_func": "crossover_weights_average",
-    "input_to_hidden_connections": "(24,9)",
-    "hidden_to_output_connections": "(9,9)",
+    "input_to_hidden_connections": "[24,9]",
+    "hidden_to_output_connections": "[9,9]",
 }
 
 
@@ -27,8 +27,8 @@ test_ann_config: dict = {
                 "hidden_activation_func": "linear_activation_function",
                 "output_activation_func": "argmax_activation",
                 "new_generation_func": "crossover_weights_average",
-                "input_to_hidden_connections": "(24,9)",
-                "hidden_to_output_connections": "(9,9)",
+                "input_to_hidden_connections": "[24,9]",
+                "hidden_to_output_connections": "[9,9]",
             }
         ),
         (
@@ -37,8 +37,8 @@ test_ann_config: dict = {
                 "hidden_activation_func": "sigmoid_activation_fucntion",
                 "output_activation_func": "soft_argmax_activation",
                 "new_generation_func": "crossover_weights_average",
-                "input_to_hidden_connections": "(24,9)",
-                "hidden_to_output_connections": "(9,9)",
+                "input_to_hidden_connections": "[24,9]",
+                "hidden_to_output_connections": "[9,9]",
             }
         ),
     ],
@@ -49,25 +49,9 @@ def test_formatting_ann_config(test_config) -> None:
     foramtted_test_config = format_ann_config(ann_config=test_config)
 
     assert isinstance(foramtted_test_config, dict)
-    assert (
-        foramtted_test_config["functions_ref"]["weight_init_huristic"]
-        == test_config["weight_init_huristic"]
-    )
-    assert (
-        foramtted_test_config["functions_ref"]["hidden_activation_func"]
-        == test_config["hidden_activation_func"]
-    )
-    assert (
-        foramtted_test_config["functions_ref"]["output_activation_func"]
-        == test_config["output_activation_func"]
-    )
-    assert (
-        foramtted_test_config["functions_ref"]["new_generation_func"]
-        == test_config["new_generation_func"]
-    )
 
-    assert foramtted_test_config["input_to_hidden_connections"] == (24, 9)
-    assert foramtted_test_config["hidden_to_output_connections"] == (9, 9)
+    assert foramtted_test_config["input_to_hidden_connections"] == [24, 9]
+    assert foramtted_test_config["hidden_to_output_connections"] == [9, 9]
 
 
 def test_random_brain_generation() -> None:

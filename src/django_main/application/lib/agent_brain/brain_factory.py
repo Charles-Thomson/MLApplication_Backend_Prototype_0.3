@@ -37,11 +37,11 @@ class BrainFactory:
     ):
         """Generate the brain based of given type"""
 
-        try:
-            cls.set_callable_brain_functions(ann_config=ann_config)
+        # try:
+        #     cls.set_callable_brain_functions(ann_config=ann_config)
 
-        except KeyError as err:
-            raise ValueError("The function_ref file is not valid") from err
+        # except KeyError as err:
+        #     raise ValueError("The function_ref file is not valid") from err
 
         try:
             retreval = cls.brain_types[brain_type]
@@ -54,39 +54,39 @@ class BrainFactory:
             parents=parents,
         )
 
-    @classmethod
-    def set_callable_brain_functions(cls, ann_config: dict) -> dict:
-        """
-        Set the functions used in the BrainInstance based on the function referances in the config
-        var: ann_config - brain config file
-        rtn ann_config - brain config file post functions being set
-        """
+    # @classmethod
+    # def set_callable_brain_functions(cls, ann_config: dict) -> dict:
+    #     """
+    #     Set the functions used in the BrainInstance based on the function referances in the config
+    #     var: ann_config - brain config file
+    #     rtn ann_config - brain config file post functions being set
+    #     """
 
-        ann_config["functions_callable"][
-            "weight_init_huristic"
-        ] = WeightHuristicsFactory.get_huristic(
-            ann_config["functions_ref"]["weight_init_huristic"]
-        )
+    #     ann_config["functions_callable"][
+    #         "weight_init_huristic"
+    #     ] = WeightHuristicsFactory.get_huristic(
+    #         ann_config["functions_ref"]["weight_init_huristic"]
+    #     )
 
-        ann_config["functions_callable"][
-            "hidden_activation_func"
-        ] = HiddenLayerActvaitionFactory.get_hidden_activation_func(
-            ann_config["functions_ref"]["hidden_activation_func"]
-        )
+    #     ann_config["functions_callable"][
+    #         "hidden_activation_func"
+    #     ] = HiddenLayerActvaitionFactory.get_hidden_activation_func(
+    #         ann_config["functions_ref"]["hidden_activation_func"]
+    #     )
 
-        ann_config["functions_callable"][
-            "output_activation_func"
-        ] = OutputLayerActvaitionFactory.get_output_activation_func(
-            ann_config["functions_ref"]["output_activation_func"]
-        )
+    #     ann_config["functions_callable"][
+    #         "output_activation_func"
+    #     ] = OutputLayerActvaitionFactory.get_output_activation_func(
+    #         ann_config["functions_ref"]["output_activation_func"]
+    #     )
 
-        ann_config["functions_callable"][
-            "new_generation_func"
-        ] = GenerationalFunctionsFactory.get_generation_func(
-            ann_config["functions_ref"]["new_generation_func"]
-        )
+    #     ann_config["functions_callable"][
+    #         "new_generation_func"
+    #     ] = GenerationalFunctionsFactory.get_generation_func(
+    #         ann_config["functions_ref"]["new_generation_func"]
+    #     )
 
-        return ann_config
+    #     return ann_config
 
     @classmethod
     def register(cls, type_name):

@@ -9,6 +9,8 @@ class BrainInstance:
     def __init__(self, brain_config: dict) -> None:
         """Setup the core elements of the brain"""
 
+        self.brain_config = brain_config
+
         self.fitness: float = brain_config["fitness"]
         self.traversed_path: list[tuple] = brain_config["traversed_path"]
         self.fitness_by_step: list[float] = brain_config["fitness_by_step"]
@@ -27,11 +29,17 @@ class BrainInstance:
         self.hidden_weights: np.array = brain_config["weights"]["hidden_weights"]
         self.output_weights: np.array = brain_config["weights"]["output_weights"]
 
-        self.functions_ref: dict = brain_config["functions_ref"]
+        self.functions_callable = brain_config["functions_callable"]
 
         # self.svg_path: str = ""
         # self.svg_start: str = ""
         # self.svg_end: str = ""
+
+    # TODO: See if the approach of setting the ann after use and returing it is better ?
+    def update_and_return_config(self):
+        """
+        Update and return the brains config file
+        """
 
     def determin_action(self, sight_data: np.array) -> int:
         """Determin best action based on given data/activation"""

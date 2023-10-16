@@ -14,8 +14,8 @@ test_random_ann_config: dict = {
     "hidden_activation_func": "linear_activation_function",
     "output_activation_func": "argmax_activation",
     "new_generation_func": "crossover_weights_average",
-    "input_to_hidden_connections": "(24,9)",
-    "hidden_to_output_connections": "(9,9)",
+    "input_to_hidden_connections": "[24,9]",
+    "hidden_to_output_connections": "[9,9]",
 }
 
 base_brain_config: dict = format_ann_config(ann_config=test_random_ann_config)
