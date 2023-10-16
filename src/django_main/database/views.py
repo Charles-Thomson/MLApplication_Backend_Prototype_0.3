@@ -64,7 +64,7 @@ def add_all(request):
 def get_instance(request) -> None:
     """Get a brain Instance back from the model"""
 
-    brain_model: BrainInstanceModel = BrainInstanceModel.objects.get(id=2)
+    brain_model: BrainInstanceModel = BrainInstanceModel.objects.get(id=5)
 
     rtn_brain_instance = model_to_brain_instance(brain_model)
 
