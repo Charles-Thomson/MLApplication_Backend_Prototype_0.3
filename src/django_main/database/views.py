@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+# from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 
 
@@ -9,20 +9,16 @@ from application.lib.agent_brain.static_state_brain import BrainInstance
 from database.model_data_formatting import (
     brain_instance_to_model,
     model_to_brain_instance,
-    gernation_to_model,
+    gernation_data_to_model,
+    generation_model_to_data,
 )
 from database.models import BrainInstanceModel
 
 
-# for testing
-from application.lib.instance_generation.instance_generation_main import (
-    format_ann_config,
-)
-
-from application.lib.agent_brain.brain_factory import BrainFactory
-
-
 def index(request):
+    """
+    Basic landing page for index
+    """
     return HttpResponse("Hello, world. You're at the database index.")
 
 
@@ -43,7 +39,7 @@ def index(request):
 
 # Currently using test brains ect
 # @require_http_methods(["POST"])
-def add_all(request):
+def add_brain_instance(request):
     """Add a new Brain Instance"""
 
     brain_instance_as_model = brain_instance_to_model(
@@ -62,10 +58,11 @@ def add_generation(reauest):
     new_generation_model = gernation_to_model()
 
 
-def get_instance(request) -> None:
+@require_http_methods(["GET"])
+def get_brain_instance(request, brain_id) -> None:
     """Get a brain Instance back from the model"""
 
-    brain_model: BrainInstanceModel = BrainInstanceModel.objects.get(id=1)
+    brain_model: BrainInstanceModel = BrainInstanceModel.objects.get(id=brain_id)
 
     rtn_brain_instance = model_to_brain_instance(brain_model)
 

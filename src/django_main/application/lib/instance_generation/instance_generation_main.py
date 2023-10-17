@@ -19,6 +19,8 @@ from application.lib.instance_generation.config_formatting import (
     format_env_config,
 )
 
+from database.db_functions import save_full_generation
+
 
 class Learning_Instance:
     """
@@ -69,6 +71,11 @@ class Learning_Instance:
                 fitness_threshold=new_fitness_threshold,
             )
 
+            self.save_generation(
+                generation_number=current_generation_number,
+                parents=new_parents,
+                fitness_threshold=self.current_fitness_threshold,
+            )
             if len(new_parents) <= self.current_generation_failure_threshold:
                 break
 
@@ -96,6 +103,23 @@ class Learning_Instance:
             parents=new_parents,
             max_generation_size=self.max_generation_size,
             current_generation_number=current_generation_number,
+        )
+
+    def save_generation(
+        self,
+        parents: list[BrainInstance],
+        fitness_threshold: float,
+        generation_number: int,
+    ) -> None:
+        """
+        Save a given generation in the from of the parents from the generaiton
+        var: parents - list of parents to be saved
+        """
+
+        save_full_generation(
+            parents=parents,
+            fitness_threshold=fitness_threshold,
+            generation_number=generation_number,
         )
 
     def get_highest_fitness_brain(self, parents: list[BrainInstance]) -> object:

@@ -6,7 +6,7 @@ from application.lib.agent_brain.static_state_brain import BrainInstance
 
 from application.lib.agent_brain.brain_factory import BrainFactory
 
-from database.models import DatabaseModelsFactory
+from database.models import DatabaseModelsFactory, GenerationInstanceModel
 from rest_framework import serializers
 from database.models import BrainInstanceModel
 
@@ -69,8 +69,6 @@ def model_to_brain_instance(brain_model) -> BrainInstance:
         ann_config=brain_config,
     )
 
-    print(new_brain_instance.functions_callable)
-
     return new_brain_instance
 
 
@@ -100,7 +98,7 @@ def set_config_attributes_format(brain_config: dict) -> dict:
     return brain_config
 
 
-def gernation_to_model(generation_data: dict) -> json:
+def gernation_data_to_model(generation_data: dict) -> json:
     """
     Set convert a given geenration i.e set of parents to a db model
     var: generation_data - The given data for the generation
@@ -109,16 +107,41 @@ def gernation_to_model(generation_data: dict) -> json:
 
     model = DatabaseModelsFactory.get_model(model_type="generation_storeage_model")
 
-    generations_parents_pickle: json = jsonpickle.encode(generation_data.parents)
+    generations_parents_pickle: json = jsonpickle.encode(
+        generation_data["brain_instances"]
+    )
 
     new_generation_model = model(
-        generation_id=generate_generation_id(),
+        generation_id=generation_data["generation_id"],
         generation_number=generation_data["generation_number"],
         average_fitness=generation_data["average_fitness"],
-        BrainInstance=generations_parents_pickle,
+        fitness_threshold=generation_data["fitness_threshold"],
+        generation_brain_instances=generations_parents_pickle,
     )
 
     return new_generation_model
+
+
+def generation_model_to_data(generational_model: GenerationInstanceModel) -> dict:
+    """
+    Convert a generation_model to a usable data form
+    var: generational_model - Generational data in model form
+    rtn: this_generation_data - generation data of given model in usable format
+    """
+
+    generation_brain_instances: list[BrainInstance] = jsonpickle.decode(
+        generational_model.generation_brain_instances
+    )
+
+    this_generation_data: dict = {
+        "generation_id": generational_model.generation_id,
+        "generation_number": generational_model.generation_number,
+        "average_fitness": generational_model.average_fitness,
+        "fitness_threshold": generational_model.fitness_threshold,
+        "generation_brain_instances": generation_brain_instances,
+    }
+
+    return this_generation_data
 
 
 def generate_generation_id() -> str:

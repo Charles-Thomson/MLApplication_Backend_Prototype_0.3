@@ -9,12 +9,17 @@ from application.lib.agent_brain.brain_factory import BrainFactory
 from database.model_data_formatting import (
     brain_instance_to_model,
     model_to_brain_instance,
+    gernation_data_to_model,
+    generation_model_to_data,
 )
+
+from database.models import GenerationInstanceModel, BrainInstanceModel
+
+from database.db_functions import save_full_generation, get_generation_instance
 
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
 from django.test import TestCase
-from database.models import BrainInstanceModel
 
 
 # Create your tests here.
@@ -68,3 +73,113 @@ class BrainInstanceModelTestCase(TestCase):
         assert callable(brain_model_as_instance.output_layer_activation_func)
         self.assertIsInstance(brain_model_as_instance.hidden_weights, np.ndarray)
         self.assertIsInstance(brain_model_as_instance.output_weights, np.ndarray)
+
+
+class GenerationModelTestCase(TestCase):
+    """
+    Testing the creation, formatting, saving and getting of a Generational_model
+    """
+
+    def setUp(self) -> None:
+        self.generation_id = "test_generation_id_1"
+        self.parents = self.generate_test_parents()
+        self.generation_number: int = 1
+        self.average_fitness: float = 5.5
+        self.fitness_threshold: float = 6.0
+
+    def test_generation_data_to_model(self) -> None:
+        """
+        Test converting given generation data to the generation_data_model
+        """
+
+        average_fitness: float = sum(
+            instance.fitness for instance in self.parents
+        ) / len(self.parents)
+        generation_data: dict = {
+            "generation_id": self.generation_id,
+            "brain_instances": self.parents,
+            "fitness_threshold": self.fitness_threshold,
+            "generation_number": self.generation_number,
+            "average_fitness": average_fitness,
+        }
+
+        new_generation_model = gernation_data_to_model(generation_data=generation_data)
+
+        self.assertIsInstance(new_generation_model, GenerationInstanceModel)
+
+    def test_generation_model_to_data(self) -> None:
+        """
+        Test returning the stored data to the desiered format
+        """
+
+        average_fitness: float = sum(
+            instance.fitness for instance in self.parents
+        ) / len(self.parents)
+
+        generation_data: dict = {
+            "generation_id": self.generation_id,
+            "brain_instances": self.parents,
+            "fitness_threshold": self.fitness_threshold,
+            "generation_number": self.generation_number,
+            "average_fitness": average_fitness,
+        }
+
+        test_generation_model = gernation_data_to_model(generation_data=generation_data)
+        test_generation_model_data = generation_model_to_data(
+            generational_model=test_generation_model
+        )
+
+        self.assertEqual(
+            test_generation_model_data["generation_id"], self.generation_id
+        )
+
+        self.assertEqual(
+            len(test_generation_model_data["generation_brain_instances"]),
+            len(self.parents),
+        )
+
+        self.assertEqual(
+            test_generation_model_data["fitness_threshold"], self.fitness_threshold
+        )
+        self.assertEqual(
+            test_generation_model_data["generation_number"], self.generation_number
+        )
+        self.assertEqual(test_generation_model_data["average_fitness"], average_fitness)
+
+    def test_none_api_save_and_get_generation_model(self) -> None:
+        """
+        Test the saving of the model to the DB
+        Test the getting of the model from the DB by id
+        """
+        save_full_generation(
+            generation_id=self.generation_id,
+            parents=self.parents,
+            fitness_threshold=self.fitness_threshold,
+            generation_number=self.generation_number,
+        )
+
+        test_generation_instance_data: GenerationInstanceModel = (
+            get_generation_instance(generation_id=self.generation_id)
+        )
+
+    # This can be refactored down
+    def generate_test_parents(self) -> list[BrainInstance]:
+        """
+        Generate test brain insatnces for testing
+        """
+
+        foramtted_test_config: dict = format_ann_config(ann_config=test_ann_config)
+        test_brain_type: str = "random_weighted_brain"
+
+        def make_new_brain():
+            new_brain: BrainFactory = BrainFactory.make_brain(
+                brain_type=test_brain_type,
+                ann_config=foramtted_test_config,
+            )
+            return new_brain
+
+        parents: list[BrainInstance] = [make_new_brain() for _ in range(10)]
+
+        assert len(parents) == 10
+
+        return parents

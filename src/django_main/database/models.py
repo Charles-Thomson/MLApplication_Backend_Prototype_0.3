@@ -59,4 +59,5 @@ class GenerationInstanceModel(models.Model):
     generation_id = models.CharField(max_length=350)
     generation_number = models.CharField(max_length=350)
     average_fitness = models.CharField(max_length=350)
-    BrainInstance = models.JSONField(default=dict)
+    fitness_threshold = models.CharField(max_length=350)
+    generation_brain_instances = models.JSONField(default=dict)
