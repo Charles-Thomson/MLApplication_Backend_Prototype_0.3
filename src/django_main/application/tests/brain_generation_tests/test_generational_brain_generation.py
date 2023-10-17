@@ -1,6 +1,6 @@
 import numpy as np
 from application.lib.instance_generation.instance_generation_main import (
-    format_ann_config,
+    format_brain_config,
 )
 
 from application.lib.agent_brain.brain_factory import BrainFactory
@@ -9,7 +9,7 @@ from application.lib.agent_brain.static_state_brain import BrainInstance
 # Test holder
 
 
-test_random_ann_config: dict = {
+test_random_brain_config: dict = {
     "weight_init_huristic": "he_weight",
     "hidden_activation_func": "linear_activation_function",
     "output_activation_func": "argmax_activation",
@@ -18,7 +18,7 @@ test_random_ann_config: dict = {
     "hidden_to_output_connections": "[9,9]",
 }
 
-base_brain_config: dict = format_ann_config(ann_config=test_random_ann_config)
+base_brain_config: dict = format_brain_config(brain_config=test_random_brain_config)
 
 
 def test_generational_brain_generation() -> None:
@@ -31,7 +31,7 @@ def test_generational_brain_generation() -> None:
     random_test_brains: list[BrainInstance] = [
         BrainFactory.make_brain(
             brain_type=test_random_brain_type,
-            ann_config=base_brain_config,
+            brain_config=base_brain_config,
         )
         for _ in range(10)
     ]
@@ -42,7 +42,7 @@ def test_generational_brain_generation() -> None:
 
     test_generational_brain: BrainInstance = BrainFactory.make_brain(
         brain_type=test_generational_brain_type,
-        ann_config=base_brain_config,
+        brain_config=base_brain_config,
         parents=random_test_brains,
     )
 

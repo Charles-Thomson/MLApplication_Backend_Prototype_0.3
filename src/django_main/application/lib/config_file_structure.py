@@ -16,7 +16,7 @@ test_config = {
         "fitness_threshold": "2",
         "new_generation_threshold": "2",
     },
-    "ann_config": {
+    "brain_config": {
         "weight_init_huristic": "he_weight",
         "hidden_activation_func": "linear_activation_function",
         "output_activation_func": "argmax_activation",

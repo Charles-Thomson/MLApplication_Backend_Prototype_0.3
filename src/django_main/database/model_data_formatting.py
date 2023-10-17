@@ -66,7 +66,7 @@ def model_to_brain_instance(brain_model) -> BrainInstance:
 
     new_brain_instance: BrainInstance = BrainFactory.make_brain(
         brain_type=brain_config["brain_type"],
-        ann_config=brain_config,
+        brain_config=brain_config,
     )
 
     return new_brain_instance
@@ -105,10 +105,10 @@ def gernation_data_to_model(generation_data: dict) -> json:
     rtn: new_generation_model - generation data in a db model format
     """
 
-    model = DatabaseModelsFactory.get_model(model_type="generation_storeage_model")
+    model = DatabaseModelsFactory.get_model(model_type="generation_storage_model")
 
     generations_parents_pickle: json = jsonpickle.encode(
-        generation_data["brain_instances"]
+        generation_data["generation_brain_instances"]
     )
 
     new_generation_model = model(

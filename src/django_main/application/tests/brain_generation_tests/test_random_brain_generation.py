@@ -2,13 +2,13 @@
 import pytest
 import numpy as np
 from application.lib.instance_generation.instance_generation_main import (
-    format_ann_config,
+    format_brain_config,
 )
 
 from application.lib.agent_brain.brain_factory import BrainFactory
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
-test_ann_config: dict = {
+test_brain_config: dict = {
     "weight_init_huristic": "he_weight",
     "hidden_activation_func": "linear_activation_function",
     "output_activation_func": "argmax_activation",
@@ -43,10 +43,10 @@ test_ann_config: dict = {
         ),
     ],
 )
-def test_formatting_ann_config(test_config) -> None:
-    """Testing the formatting of the ann config file"""
+def test_formatting_brain_config(test_config) -> None:
+    """Testing the formatting of the brain config file"""
 
-    foramtted_test_config = format_ann_config(ann_config=test_config)
+    foramtted_test_config = format_brain_config(brain_config=test_config)
 
     assert isinstance(foramtted_test_config, dict)
 
@@ -57,14 +57,14 @@ def test_formatting_ann_config(test_config) -> None:
 def test_random_brain_generation() -> None:
     """Test the genartaion of a random weighted brain"""
 
-    foramtted_test_config = format_ann_config(ann_config=test_ann_config)
+    foramtted_test_config = format_brain_config(brain_config=test_brain_config)
 
     test_brain_type: str = "random_weighted_brain"
     parents: list = []
 
     test_brain = BrainFactory.make_brain(
         brain_type=test_brain_type,
-        ann_config=foramtted_test_config,
+        brain_config=foramtted_test_config,
     )
 
     assert isinstance(test_brain, BrainInstance)

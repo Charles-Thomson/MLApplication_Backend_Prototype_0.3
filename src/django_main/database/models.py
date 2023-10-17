@@ -48,7 +48,7 @@ class BrainInstanceModel(models.Model):
     # svg_end = models.CharField(max_length=350, default="")
 
 
-@DatabaseModelsFactory.register("generation_storeage_model")
+@DatabaseModelsFactory.register("generation_storage_model")
 class GenerationInstanceModel(models.Model):
     """
     A model to store a full generation of BrainInstances

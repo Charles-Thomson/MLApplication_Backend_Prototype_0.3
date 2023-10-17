@@ -1,4 +1,4 @@
-"""generate the intances for trainning of the ann"""
+"""generate the intances for trainning of the brain"""
 import json
 from typing import Generator
 import uuid
@@ -15,7 +15,7 @@ from application.lib.agent.agent_generator import new_agent_generator
 
 from application.lib.instance_generation.config_formatting import (
     format_instance_config,
-    format_ann_config,
+    format_brain_config,
     format_env_config,
 )
 
@@ -71,10 +71,10 @@ class Learning_Instance:
                 fitness_threshold=new_fitness_threshold,
             )
 
-            self.save_generation(
-                generation_number=current_generation_number,
-                parents=new_parents,
+            save_full_generation(
+                generation_brain_instances=new_parents,
                 fitness_threshold=self.current_fitness_threshold,
+                generation_number=current_generation_number,
             )
             if len(new_parents) <= self.current_generation_failure_threshold:
                 break
@@ -103,23 +103,6 @@ class Learning_Instance:
             parents=new_parents,
             max_generation_size=self.max_generation_size,
             current_generation_number=current_generation_number,
-        )
-
-    def save_generation(
-        self,
-        parents: list[BrainInstance],
-        fitness_threshold: float,
-        generation_number: int,
-    ) -> None:
-        """
-        Save a given generation in the from of the parents from the generaiton
-        var: parents - list of parents to be saved
-        """
-
-        save_full_generation(
-            parents=parents,
-            fitness_threshold=fitness_threshold,
-            generation_number=generation_number,
         )
 
     def get_highest_fitness_brain(self, parents: list[BrainInstance]) -> object:
@@ -201,7 +184,7 @@ def new_instance(config: json) -> Learning_Instance:
 
     env_config: dict = format_env_config(config["env_config"])
 
-    ann_config_formatted: dict = format_ann_config(config["ann_config"])
+    brain_config_formatted: dict = format_brain_config(config["brain_config"])
 
     instance_config_formatted: dict = format_instance_config(config["instance_config"])
 
@@ -211,7 +194,7 @@ def new_instance(config: json) -> Learning_Instance:
 
     agent_generater_partial: callable = partial(
         new_agent_generator,
-        ann_config=ann_config_formatted,
+        brain_config=brain_config_formatted,
         agent_type=config["agent_type"],
         environment=environment,
     )

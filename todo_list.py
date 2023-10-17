@@ -1,22 +1,19 @@
 # TODO NEXT
 
+# Clean up the adding/getting and formatting of database models - it's messey currently
+# DONE 1. Naming of the parents all the way down chnages - rename
+# DONE 2. Naming of the ann_config / brain_confg - all the way down. Rename and refactor
+# 3. Layout and usage of the fomatting of the data_to_model ect needs to be refactored down/ cleaned up
+# 4. can unessesary function calls be removed from the adding of generations - currently have a middle man style thing going on
 
-# TODAY
 # Work out the structure of the generation_model and how each generation will be saved
 
-# Set up the saving of the generation_models inc formatting ect
 
 # Add the passing of var data to the views - then add this to the testing
 
 # Work out the ID system - final brain instance needs to be linked to each of the saved generations
 # Or create an over arching model for each the inc the final brain and generation based data ?
 
-# Set up test for the generation_models - adding and getting from db
-
-# Clean up the adding/getting and formatting of database models - it's messey currently
-
-
-# Build the generation data config on the running of instance func
 
 # Add the var path to the URLS for the views - i.e the brain instance to be saved ect
 

@@ -25,7 +25,7 @@ def save_brain_instance(brain_instance: BrainInstance, model_type: str) -> None:
 
 def save_full_generation(
     generation_id: str,
-    parents: list[BrainInstance],
+    generation_brain_instances: list[BrainInstance],
     fitness_threshold: float,
     generation_number: int,
 ) -> None:
@@ -33,12 +33,12 @@ def save_full_generation(
     Save a full generation to the db
     """
 
-    average_fitness: float = sum(instance.fitness for instance in parents) / len(
-        parents
-    )
+    average_fitness: float = sum(
+        instance.fitness for instance in generation_brain_instances
+    ) / len(generation_brain_instances)
     generation_data: dict = {
         "generation_id": generation_id,
-        "brain_instances": parents,
+        "generation_brain_instances": generation_brain_instances,
         "fitness_threshold": fitness_threshold,
         "generation_number": generation_number,
         "average_fitness": average_fitness,

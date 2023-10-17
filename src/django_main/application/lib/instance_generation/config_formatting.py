@@ -38,14 +38,10 @@ def format_instance_config(config: dict) -> dict:
     return this_instance_config
 
 
-# TODO: Rename the ann_config to barin config ??
-# Move the setting of the functions into the Brain_Factoy ?
+def format_brain_config(brain_config: dict) -> dict:
+    """Format the brain config from dict[str:str] to dict[str:type]"""
 
-
-def format_ann_config(ann_config: dict) -> dict:
-    """Format the ann config from dict[str:str] to dict[str:type]"""
-
-    formatted_ann_config: dict = {
+    formatted_brain_config: dict = {
         "input_to_hidden_connections": "",
         "hidden_to_output_connections": "",
         "brain_type": "",
@@ -63,38 +59,38 @@ def format_ann_config(ann_config: dict) -> dict:
         "weights": {"hidden_weights": "", "output_weights": ""},
     }
 
-    formatted_ann_config["brain_id"] = ""
+    formatted_brain_config["brain_id"] = ""
 
-    formatted_ann_config["functions_callable"][
+    formatted_brain_config["functions_callable"][
         "weight_init_huristic"
-    ] = WeightHuristicsFactory.get_huristic(ann_config["weight_init_huristic"])
+    ] = WeightHuristicsFactory.get_huristic(brain_config["weight_init_huristic"])
 
-    formatted_ann_config["functions_callable"][
+    formatted_brain_config["functions_callable"][
         "hidden_activation_func"
     ] = HiddenLayerActvaitionFactory.get_hidden_activation_func(
-        ann_config["hidden_activation_func"]
+        brain_config["hidden_activation_func"]
     )
 
-    formatted_ann_config["functions_callable"][
+    formatted_brain_config["functions_callable"][
         "output_activation_func"
     ] = OutputLayerActvaitionFactory.get_output_activation_func(
-        ann_config["output_activation_func"]
+        brain_config["output_activation_func"]
     )
 
-    formatted_ann_config["functions_callable"][
+    formatted_brain_config["functions_callable"][
         "new_generation_func"
     ] = GenerationalFunctionsFactory.get_generation_func(
-        ann_config["new_generation_func"]
+        brain_config["new_generation_func"]
     )
 
-    formatted_ann_config["input_to_hidden_connections"]: list[int] = json.loads(
-        ann_config["input_to_hidden_connections"]
+    formatted_brain_config["input_to_hidden_connections"]: list[int] = json.loads(
+        brain_config["input_to_hidden_connections"]
     )
-    formatted_ann_config["hidden_to_output_connections"]: list[int] = json.loads(
-        ann_config["hidden_to_output_connections"]
+    formatted_brain_config["hidden_to_output_connections"]: list[int] = json.loads(
+        brain_config["hidden_to_output_connections"]
     )
 
-    return formatted_ann_config
+    return formatted_brain_config
 
 
 def format_env_config(config: dict) -> dict:
