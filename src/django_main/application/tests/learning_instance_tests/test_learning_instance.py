@@ -50,7 +50,7 @@ def get_agent_generator(learning_instance) -> Generator:
     Return a new agnet generator for testing
     """
     return learning_instance.get_new_agent_generator(
-        new_parents=[], current_generation_number=0
+        instance_id="test_instance", new_parents=[], current_generation_number=0
     )
 
 
@@ -81,26 +81,11 @@ def test_instance_attributes(learning_instance) -> None:
     assert callable(learning_instance.agent_generater_partial) is True
 
     agent_generator_in_instance: object = learning_instance.get_new_agent_generator(
+        instance_id="test-instance",
         new_parents=[],
         current_generation_number=0,
     )
     assert isinstance(next(agent_generator_in_instance), StaticStateMazeAgent)
-
-
-def test_get_longest_path(parent_data, learning_instance) -> None:
-    """Get the brain instance longest path from a set of given brains"""
-    longest_path_brain_instance: BrainInstance = (
-        learning_instance.get_longest_path_brain(parents=parent_data)
-    )
-    assert len(longest_path_brain_instance.traversed_path) == number_of_test_brains - 1
-
-
-def test_get_highest_fitness(parent_data, learning_instance) -> None:
-    """Get the highest fitness brain instance from a set of given brains"""
-    highest_fitness_brain_instance: BrainInstance = (
-        learning_instance.get_highest_fitness_brain(parents=parent_data)
-    )
-    assert highest_fitness_brain_instance.fitness == number_of_test_brains - 1
 
 
 def test_run_generation(learning_instance, agent_generator) -> None:

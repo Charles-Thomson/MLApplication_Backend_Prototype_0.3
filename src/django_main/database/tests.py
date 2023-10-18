@@ -45,6 +45,7 @@ class BrainInstanceModelTestCase(TestCase):
         test_brain_type: str = "random_weighted_brain"
 
         self.test_brain = BrainFactory.make_brain(
+            brain_id="test_brain",
             brain_type=test_brain_type,
             brain_config=foramtted_test_config,
         )
@@ -53,7 +54,7 @@ class BrainInstanceModelTestCase(TestCase):
         """Test teh creation of a brain instance model from a BrainInstance"""
 
         brain_instance_as_model = brain_instance_to_model(
-            brain_instance=self.test_brain, model_type="general"
+            brain_instance=self.test_brain
         )
         self.assertIsInstance(brain_instance_as_model, BrainInstanceModel)
 
@@ -63,7 +64,7 @@ class BrainInstanceModelTestCase(TestCase):
         """
 
         brain_instance_as_model = brain_instance_to_model(
-            brain_instance=self.test_brain, model_type="general"
+            brain_instance=self.test_brain
         )
 
         brain_model_as_instance = model_to_brain_instance(
@@ -141,12 +142,15 @@ class GenerationModelTestCase(TestCase):
         )
 
         self.assertEqual(
-            test_generation_model_data["fitness_threshold"], self.fitness_threshold
+            float(test_generation_model_data["fitness_threshold"]),
+            self.fitness_threshold,
         )
         self.assertEqual(
-            test_generation_model_data["generation_number"], self.generation_number
+            int(test_generation_model_data["generation_number"]), self.generation_number
         )
-        self.assertEqual(test_generation_model_data["average_fitness"], average_fitness)
+        self.assertEqual(
+            float(test_generation_model_data["average_fitness"]), average_fitness
+        )
 
     def test_none_api_save_and_get_generation_model(self) -> None:
         """
@@ -177,6 +181,7 @@ class GenerationModelTestCase(TestCase):
 
         def make_new_brain():
             new_brain: BrainFactory = BrainFactory.make_brain(
+                brain_id="test_brain",
                 brain_type=test_brain_type,
                 brain_config=foramtted_test_config,
             )

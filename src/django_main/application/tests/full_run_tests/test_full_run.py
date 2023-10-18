@@ -6,7 +6,10 @@ from application.logging.logging_for_testing import (
     with_test_brian_logging,
 )
 
+import pytest
 
+
+@pytest.mark.django_db
 @with_test_brian_logging
 def test_full_instance() -> None:
     test_config = {

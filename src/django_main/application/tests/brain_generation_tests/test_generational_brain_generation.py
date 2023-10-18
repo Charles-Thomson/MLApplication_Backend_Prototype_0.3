@@ -6,6 +6,7 @@ from application.lib.instance_generation.instance_generation_main import (
 from application.lib.agent_brain.brain_factory import BrainFactory
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
+
 # Test holder
 
 
@@ -30,6 +31,7 @@ def test_generational_brain_generation() -> None:
 
     random_test_brains: list[BrainInstance] = [
         BrainFactory.make_brain(
+            brain_id="test_brain",
             brain_type=test_random_brain_type,
             brain_config=base_brain_config,
         )
@@ -41,6 +43,7 @@ def test_generational_brain_generation() -> None:
         assert isinstance(instance, BrainInstance)
 
     test_generational_brain: BrainInstance = BrainFactory.make_brain(
+        brain_id="test_brain",
         brain_type=test_generational_brain_type,
         brain_config=base_brain_config,
         parents=random_test_brains,

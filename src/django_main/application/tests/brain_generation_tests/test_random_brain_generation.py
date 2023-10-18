@@ -8,6 +8,7 @@ from application.lib.instance_generation.instance_generation_main import (
 from application.lib.agent_brain.brain_factory import BrainFactory
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
+
 test_brain_config: dict = {
     "weight_init_huristic": "he_weight",
     "hidden_activation_func": "linear_activation_function",
@@ -63,6 +64,7 @@ def test_random_brain_generation() -> None:
     parents: list = []
 
     test_brain = BrainFactory.make_brain(
+        brain_id="test_brain",
         brain_type=test_brain_type,
         brain_config=foramtted_test_config,
     )

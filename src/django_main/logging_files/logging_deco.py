@@ -5,9 +5,7 @@ import logging
 
 # Basic logging config
 logging.root.setLevel(logging.NOTSET)
-logging.basicConfig(
-    level=logging.NOTSET,
-)
+logging.basicConfig(level=logging.NOTSET)
 
 DEFAULT_FORMAT = "%(levelname)s :: %(funcName)s :: %(message)s"
 

@@ -29,8 +29,7 @@ class DatabaseModelsFactory:
         return deco
 
 
-# TODO: Test if the functins can be passed in assigned as a function over a model field
-@DatabaseModelsFactory.register("general")
+@DatabaseModelsFactory.register("brain_instance_model")
 class BrainInstanceModel(models.Model):
     """Model for the Brain Instances"""
 
@@ -38,8 +37,8 @@ class BrainInstanceModel(models.Model):
     brain_id = models.CharField(max_length=350)
     current_generation_number = models.CharField(max_length=350)
     fitness = models.CharField(max_length=350)
-    traversed_path = models.CharField(max_length=350, default=list)
-    fitness_by_step = models.CharField(max_length=350, default=list)
+    traversed_path = models.JSONField(default=dict)
+    fitness_by_step = models.JSONField(default=dict)
     weights = models.JSONField(default=dict)
     functions_callable = models.JSONField(default=dict)
 

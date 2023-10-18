@@ -9,6 +9,8 @@ class BrainInstance:
     def __init__(self, brain_config: dict) -> None:
         """Setup the core elements of the brain"""
 
+        self.brain_id: str = brain_config["brain_id"]
+
         self.brain_config = brain_config
 
         self.fitness: float = brain_config["fitness"]
@@ -17,7 +19,6 @@ class BrainInstance:
         self.current_generation_number: int = brain_config["current_generation_number"]
 
         self.brain_type = brain_config["brain_type"]
-        self.brain_id: str = brain_config["brain_id"]
 
         self.hidden_layer_activation_func: callable = brain_config[
             "functions_callable"

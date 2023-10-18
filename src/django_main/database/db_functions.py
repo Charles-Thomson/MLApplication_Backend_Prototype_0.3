@@ -12,6 +12,8 @@ from database.model_data_formatting import (
     gernation_data_to_model,
 )
 
+from logging_files.logging_decos import with_save_generation_logging
+
 
 def save_brain_instance(brain_instance: BrainInstance, model_type: str) -> None:
     """Save the given Brain Instance to the Django DB"""
@@ -23,6 +25,7 @@ def save_brain_instance(brain_instance: BrainInstance, model_type: str) -> None:
     new_brain_instance_as_model.save()
 
 
+@with_save_generation_logging
 def save_full_generation(
     generation_id: str,
     generation_brain_instances: list[BrainInstance],
@@ -32,10 +35,10 @@ def save_full_generation(
     """
     Save a full generation to the db
     """
-
     average_fitness: float = sum(
         instance.fitness for instance in generation_brain_instances
     ) / len(generation_brain_instances)
+
     generation_data: dict = {
         "generation_id": generation_id,
         "generation_brain_instances": generation_brain_instances,
@@ -49,6 +52,8 @@ def save_full_generation(
     )
 
     new_generation_model.save()
+
+    return generation_data
 
 
 def get_brain_instance(brain_id: int) -> None:
