@@ -29,6 +29,42 @@ class DatabaseModelsFactory:
         return deco
 
 
+@DatabaseModelsFactory.register("learning_instance_model")
+class LearningInstanceModel(models.Model):
+    """
+    A model to store the data from a learning instace
+    """
+
+    learning_instance_id = models.CharField(max_length=350)
+    alpha_brain = models.JSONField(default=dict)
+    number_of_generations = models.CharField(max_length=350)
+
+    def __str__(self):
+        return f"Instance ID: {self.learning_instance_id} - Number of Generations: {self.number_of_generations}"
+
+
+@DatabaseModelsFactory.register("generation_instance_model")
+class GenerationInstanceModel(models.Model):
+    """
+    A model to store a full generation of BrainInstances
+    In the current version this strones a set of parents - i.e the "fit" instances
+    from a previous generation
+    """
+
+    generation_id = models.CharField(max_length=350)
+    generation_number = models.CharField(max_length=350)
+    average_fitness = models.CharField(max_length=350)
+    fitness_threshold = models.CharField(max_length=350)
+    parents_of_generation = models.JSONField(default=dict)
+    generation_alpha_brain = models.JSONField(default=dict)
+    learning_instance_ref = models.ForeignKey(
+        LearningInstanceModel, on_delete=models.CASCADE, default=""
+    )
+
+    def __str__(self):
+        return f"Generation ID: {self.generation_id} - Generation Number: {self.generation_number}"
+
+
 @DatabaseModelsFactory.register("brain_instance_model")
 class BrainInstanceModel(models.Model):
     """Model for the Brain Instances"""
@@ -42,21 +78,13 @@ class BrainInstanceModel(models.Model):
     weights = models.JSONField(default=dict)
     functions_callable = models.JSONField(default=dict)
 
+    generation_instance_ref = models.ForeignKey(
+        GenerationInstanceModel, on_delete=models.CASCADE, default=""
+    )
+
+    def __str__(self):
+        return f"Brain ID: {self.brain_id} - Generation Number: {self.current_generation_number}"
+
     # svg_path = models.CharField(max_length=350, default="")
     # svg_start = models.CharField(max_length=350, default="")
     # svg_end = models.CharField(max_length=350, default="")
-
-
-@DatabaseModelsFactory.register("generation_storage_model")
-class GenerationInstanceModel(models.Model):
-    """
-    A model to store a full generation of BrainInstances
-    In the current version this strones a set of parents - i.e the "fit" instances
-    from a previous generation
-    """
-
-    generation_id = models.CharField(max_length=350)
-    generation_number = models.CharField(max_length=350)
-    average_fitness = models.CharField(max_length=350)
-    fitness_threshold = models.CharField(max_length=350)
-    generation_brain_instances = models.JSONField(default=dict)

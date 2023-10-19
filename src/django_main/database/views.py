@@ -9,8 +9,8 @@ from application.lib.agent_brain.static_state_brain import BrainInstance
 from database.model_data_formatting import (
     brain_instance_to_model,
     model_to_brain_instance,
-    gernation_data_to_model,
-    generation_model_to_data,
+    generation_object_to_model,
+    generation_model_to_object,
 )
 from database.models import BrainInstanceModel
 

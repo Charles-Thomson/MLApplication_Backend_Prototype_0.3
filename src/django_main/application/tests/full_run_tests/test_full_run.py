@@ -2,7 +2,7 @@ from application.lib.instance_generation.instance_generation_main import (
     new_instance,
 )
 
-from application.logging.logging_for_testing import (
+from logging_files.logging_for_testing import (
     with_test_brian_logging,
 )
 
@@ -12,6 +12,9 @@ import pytest
 @pytest.mark.django_db
 @with_test_brian_logging
 def test_full_instance() -> None:
+    """
+    Testing a full run of an instance
+    """
     test_config = {
         "env_type": "Static_State",
         "agent_type": "Static_State",

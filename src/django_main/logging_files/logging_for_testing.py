@@ -16,7 +16,7 @@ logging.basicConfig(
 DEFAULT_FORMAT = "%(levelname)s :: %(funcName)s :: %(message)s"
 
 new_logger = logging.getLogger()
-filename = "application/tests/test_logging_files/brain_logging.log"
+filename = "loging_files/logs/testing_logs/brain_instance_logs.log"
 
 
 should_roll_over = os.path.isfile(filename)

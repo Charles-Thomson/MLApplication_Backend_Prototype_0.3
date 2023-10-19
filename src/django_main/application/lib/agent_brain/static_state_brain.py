@@ -11,26 +11,22 @@ class BrainInstance:
 
         self.brain_id: str = brain_config["brain_id"]
 
-        self.brain_config = brain_config
-
+        self.brain_config: dict = brain_config
+        self.brain_type: str = brain_config["brain_type"]
         self.fitness: float = brain_config["fitness"]
         self.traversed_path: list[tuple] = brain_config["traversed_path"]
         self.fitness_by_step: list[float] = brain_config["fitness_by_step"]
         self.current_generation_number: int = brain_config["current_generation_number"]
-
-        self.brain_type = brain_config["brain_type"]
-
-        self.hidden_layer_activation_func: callable = brain_config[
-            "functions_callable"
-        ]["hidden_activation_func"]
-        self.output_layer_activation_func: callable = brain_config[
-            "functions_callable"
-        ]["output_activation_func"]
-
         self.hidden_weights: np.array = brain_config["weights"]["hidden_weights"]
         self.output_weights: np.array = brain_config["weights"]["output_weights"]
+        self.functions_callable: dict = brain_config["functions_callable"]
 
-        self.functions_callable = brain_config["functions_callable"]
+        self.hidden_layer_activation_func: callable = self.functions_callable[
+            "hidden_activation_func"
+        ]
+        self.output_layer_activation_func: callable = self.functions_callable[
+            "output_activation_func"
+        ]
 
         # self.svg_path: str = ""
         # self.svg_start: str = ""

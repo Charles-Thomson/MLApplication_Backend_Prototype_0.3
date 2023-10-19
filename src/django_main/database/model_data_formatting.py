@@ -6,12 +6,23 @@ from application.lib.agent_brain.static_state_brain import BrainInstance
 
 from application.lib.agent_brain.brain_factory import BrainFactory
 
-from database.models import DatabaseModelsFactory, GenerationInstanceModel
+from application.lib.storage_objects.generation_object import GenerationObject
+from application.lib.storage_objects.learning_instance_object import (
+    LearningInstanceObject,
+)
+
+from database.models import (
+    DatabaseModelsFactory,
+    GenerationInstanceModel,
+    LearningInstanceModel,
+)
 
 from database.serializers import (
     ModelToBrainInstanceSerializer,
     ModelToGenerationDataSerializer,
+    ModelToLearningInstanceSerializer,
 )
+
 
 from database.models import BrainInstanceModel
 
@@ -73,29 +84,35 @@ def model_to_brain_instance(brain_model) -> BrainInstance:
     return new_brain_instance
 
 
-def gernation_data_to_model(generation_data: dict) -> json:
+def generation_object_to_model(
+    generation_data: GenerationObject, learning_instance_referace: str
+) -> json:
     """
     Set convert a given geenration i.e set of parents to a db model
     var: generation_data - The given data for the generation
     rtn: new_generation_model - generation data in a db model format
     """
 
-    model = DatabaseModelsFactory.get_model(model_type="generation_storage_model")
+    model = DatabaseModelsFactory.get_model(model_type="generation_instance_model")
 
     new_generation_model = model(
-        generation_id=generation_data["generation_id"],
-        generation_number=generation_data["generation_number"],
-        average_fitness=generation_data["average_fitness"],
-        fitness_threshold=generation_data["fitness_threshold"],
-        generation_brain_instances=jsonpickle.encode(
-            generation_data["generation_brain_instances"]
+        generation_id=generation_data.generation_id,
+        generation_number=generation_data.generation_number,
+        average_fitness=generation_data.average_fitnees,
+        fitness_threshold=generation_data.fitness_threshold,
+        parents_of_generation=jsonpickle.encode(generation_data.parents_of_generation),
+        generation_alpha_brain=jsonpickle.encode(
+            generation_data.generation_alpha_brain
         ),
+        learning_instance_ref=learning_instance_referace,
     )
 
     return new_generation_model
 
 
-def generation_model_to_data(generational_model: GenerationInstanceModel) -> dict:
+def generation_model_to_object(
+    generational_model: GenerationInstanceModel,
+) -> GenerationObject:
     """
     Convert a generation_model to a usable data form
     var: generational_model - Generational data in model form
@@ -104,11 +121,42 @@ def generation_model_to_data(generational_model: GenerationInstanceModel) -> dic
 
     generation_data: dict = ModelToGenerationDataSerializer(generational_model).data
 
-    generation_data["generation_brain_instances"] = jsonpickle.decode(
-        generational_model.generation_brain_instances
+    generation_data_object: GenerationObject = GenerationObject(*generation_data)
+
+    return generation_data_object
+
+
+def learning_instance_data_to_model(
+    learning_instance_data: dict,
+) -> LearningInstanceModel:
+    """
+    Convert learning instance data to a learning instance model
+    """
+
+    model = DatabaseModelsFactory.get_model(model_type="learning_instance_model")
+
+    new_model: LearningInstanceModel = model(
+        id=0,
+        learning_instance_id=learning_instance_data["learning_instance_id"],
+        alpha_brain="{}",
+        number_of_generations="0",
     )
 
-    return generation_data
+    return new_model
+
+
+def learning_instance_model_to_object(
+    this_model: LearningInstanceModel,
+) -> LearningInstanceObject:
+    """
+    Convert a learning instance model to a learning instance Object
+    """
+
+    model_data: dict = ModelToLearningInstanceSerializer(this_model).data
+
+    new_object: LearningInstanceObject = LearningInstanceObject(*model_data)
+
+    return new_object
 
 
 def generate_generation_id() -> str:

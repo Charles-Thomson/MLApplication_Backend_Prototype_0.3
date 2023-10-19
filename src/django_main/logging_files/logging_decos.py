@@ -27,6 +27,24 @@ save_generation_log = generate_logger(
     __name__ + "save_generation_logger", "saved_generations.log"
 )
 
+fitness_threshold_log = generate_logger(
+    __name__ + "fitness_threshold_logger", "fintess_threshold.log"
+)
+
+
+def fitness_threshold_loging(func: Callable[..., Any]):
+    """
+    Logging deco for logging the fitness_threshold
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        fitness_threshold = func(*args)
+        fitness_threshold_log.info(f"Current fitness thresholf: {fitness_threshold}")
+        return fitness_threshold
+
+    return wrapper
+
 
 def save_generation_logging(func: Callable[..., Any]):
     """
@@ -45,3 +63,4 @@ def save_generation_logging(func: Callable[..., Any]):
 
 
 with_save_generation_logging = save_generation_logging
+with_fitness_threshold_logging = fitness_threshold_loging

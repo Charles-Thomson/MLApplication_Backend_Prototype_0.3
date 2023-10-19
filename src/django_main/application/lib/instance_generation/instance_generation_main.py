@@ -2,7 +2,6 @@
 import json
 from typing import Generator
 import uuid
-from operator import attrgetter
 
 from functools import partial
 
@@ -19,7 +18,13 @@ from application.lib.instance_generation.config_formatting import (
     format_env_config,
 )
 
-from database.db_functions import save_full_generation
+from application.lib.storage_objects.learning_instance_object import (
+    LearningInstanceObject,
+)
+
+from database.db_functions import save_learning_instance
+
+# from django_main.logging_files.logging_decos import with_fitness_threshold_logging
 
 
 class LearningInstance:
@@ -41,14 +46,19 @@ class LearningInstance:
 
         self.max_generation_size: int = instance_config["max_generation_size"]
         self.agent_generater_partial: callable = (
-            agent_generater_partial  # add an id pera here ?
+            agent_generater_partial  # add an id peram here ?
         )
 
-        self.current_parents: list[BrainInstance] = []
+        # self.current_parents: list[BrainInstance] = []
 
         self.new_generation_threshold: int = instance_config["new_generation_threshold"]
 
         self.brains: list[BrainInstance] = []
+
+        # the highest fitness brain from the whole instance
+        self.alpha_brain: BrainInstance = object
+
+        learning_instance_db_ref = save_learning_instance(self.instance_id)
 
     def run_instance(self):
         """run the instance"""
@@ -70,13 +80,13 @@ class LearningInstance:
                 fitness_threshold=new_fitness_threshold,
             )
 
-            if new_parents:
-                save_full_generation(
-                    generation_id=f"G-{self.instance_id}-{current_generation_number}",
-                    generation_brain_instances=new_parents,
-                    fitness_threshold=self.current_fitness_threshold,
-                    generation_number=current_generation_number,
-                )
+            # if new_parents:
+            #     save_full_generation(
+            #         generation_id=f"G-{self.instance_id}-{current_generation_number}",
+            #         generation_brain_instances=new_parents,
+            #         fitness_threshold=self.current_fitness_threshold,
+            #         generation_number=current_generation_number,
+            #     )
             if len(new_parents) <= self.current_generation_failure_threshold:
                 break
 
@@ -92,6 +102,7 @@ class LearningInstance:
         rtn: new_parents - A list of brain instances tha pass the fitnees threshold
         """
         new_parents: list = []
+        brain_storage: list[BrainInstance] = []
 
         for agent in agent_generator:
             post_run_agent_brain: object = agent.run_agent()
@@ -100,6 +111,11 @@ class LearningInstance:
 
             if post_run_agent_brain.fitness >= fitness_threshold:
                 new_parents.append(post_run_agent_brain)
+
+            if post_run_agent_brain.fitness >= self.alpha_brain.fitness:
+                self.alpha_brain = post_run_agent_brain
+
+            brain_storage.append(post_run_agent_brain)
 
             if len(new_parents) >= self.new_generation_threshold:
                 break
@@ -123,8 +139,6 @@ class LearningInstance:
             instance_id=instance_id,
         )
 
-    # TODO: Move fitness threshold logging to the testing side
-    # @with_fitness_threshold_logging
     def generate_new_fitness_threshold(self, parents: list[object]) -> float:
         """
         Calculate a new fitness threshold based on the average fitness + 10%
