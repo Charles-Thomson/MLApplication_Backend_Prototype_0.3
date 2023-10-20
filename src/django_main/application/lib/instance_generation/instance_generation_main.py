@@ -18,11 +18,7 @@ from application.lib.instance_generation.config_formatting import (
     format_env_config,
 )
 
-from application.lib.storage_objects.learning_instance_object import (
-    LearningInstanceObject,
-)
-
-from database.db_functions import save_learning_instance
+# from database.db_functions import save_learning_instance
 
 # from django_main.logging_files.logging_decos import with_fitness_threshold_logging
 
@@ -58,7 +54,7 @@ class LearningInstance:
         # the highest fitness brain from the whole instance
         self.alpha_brain: BrainInstance = object
 
-        learning_instance_db_ref = save_learning_instance(self.instance_id)
+        # learning_instance_db_ref = save_learning_instance(self.instance_id)
 
     def run_instance(self):
         """run the instance"""

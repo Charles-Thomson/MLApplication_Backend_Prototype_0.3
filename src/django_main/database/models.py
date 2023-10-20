@@ -51,18 +51,21 @@ class GenerationInstanceModel(models.Model):
     from a previous generation
     """
 
-    generation_id = models.CharField(max_length=350)
+    generation_instance_id = models.CharField(max_length=350)
     generation_number = models.CharField(max_length=350)
     average_fitness = models.CharField(max_length=350)
     fitness_threshold = models.CharField(max_length=350)
     parents_of_generation = models.JSONField(default=dict)
     generation_alpha_brain = models.JSONField(default=dict)
     learning_instance_ref = models.ForeignKey(
-        LearningInstanceModel, on_delete=models.CASCADE, default=""
+        LearningInstanceModel,
+        on_delete=models.CASCADE,
+        default="",
+        related_name="fk_ref",
     )
 
     def __str__(self):
-        return f"Generation ID: {self.generation_id} - Generation Number: {self.generation_number}"
+        return f"Generation ID: {self.generation_instance_id} - Generation Number: {self.generation_number}"
 
 
 @DatabaseModelsFactory.register("brain_instance_model")
@@ -79,7 +82,10 @@ class BrainInstanceModel(models.Model):
     functions_callable = models.JSONField(default=dict)
 
     generation_instance_ref = models.ForeignKey(
-        GenerationInstanceModel, on_delete=models.CASCADE, default=""
+        GenerationInstanceModel,
+        on_delete=models.CASCADE,
+        default="",
+        related_name="fk_ref",
     )
 
     def __str__(self):

@@ -1,18 +1,16 @@
 # from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 
-
-from django.http import HttpResponse
-
-from application.lib.agent_brain.static_state_brain import BrainInstance
-
-from database.model_data_formatting import (
-    brain_instance_to_model,
-    model_to_brain_instance,
-    generation_object_to_model,
-    generation_model_to_object,
-)
 from database.models import BrainInstanceModel
+from database.data_modeling.brain_instance_modeling import (
+    brain_instance_to_model,
+    brain_model_to_instance,
+)
+from database.data_modeling.generation_instance_modeling import (
+    generation_instance_to_model,
+    generation_model_to_instance,
+)
 
 
 def index(request):
@@ -64,7 +62,7 @@ def get_brain_instance(request, brain_id) -> None:
 
     brain_model: BrainInstanceModel = BrainInstanceModel.objects.get(id=brain_id)
 
-    rtn_brain_instance = model_to_brain_instance(brain_model)
+    rtn_brain_instance = brain_model_to_instance(brain_model)
 
     # print(rtn_brain_instance)
 

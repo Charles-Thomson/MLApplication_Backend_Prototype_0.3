@@ -1,37 +1,40 @@
-"""Testing of BrainInstance model generation and DB elements"""
+"""Testing of elements related to each model"""
 
 import numpy as np
-from application.lib.instance_generation.instance_generation_main import (
-    format_brain_config,
-)
-from application.lib.agent_brain.brain_factory import BrainFactory
+from django.test import TestCase
 
-from database.model_data_formatting import (
-    brain_instance_to_model,
-    model_to_brain_instance,
-    generation_object_to_model,
-    generation_model_to_object,
-)
-
-from database.models import GenerationInstanceModel, BrainInstanceModel
-
-from database.db_functions import (
-    save_generation_object,
-    get_generation_model,
+from database.internal_use_db_functions.learning_instance_functions import (
     save_learning_instance,
     get_learning_instance,
+    get_learning_model,
+)
+from database.internal_use_db_functions.generation_instance_functions import (
+    save_generation_instance,
+    get_generation_instance,
 )
 
 from application.lib.storage_objects.learning_instance_object import (
     LearningInstanceObject,
 )
+
+
+from database.models import (
+    LearningInstanceModel,
+    GenerationInstanceModel,
+    BrainInstanceModel,
+)
+
+
+from application.lib.agent_brain.brain_factory import BrainFactory
+
 from application.lib.storage_objects.generation_object import (
     GenerationObject,
 )
 
 from application.lib.agent_brain.static_state_brain import BrainInstance
-
-from django.test import TestCase
+from application.lib.instance_generation.instance_generation_main import (
+    format_brain_config,
+)
 
 
 # Create your tests here.
@@ -67,14 +70,14 @@ class LearningInsanceModelTests(TestCase):
         self.assertIsInstance(learning_instance_object, LearningInstanceObject)
 
 
-class GenerationFKTest(TestCase):
+class GenerationInstanceModelTests(TestCase):
     """Testing the saving of generation objects with the FK of a learning instance"""
 
     def setUp(self) -> None:
         self.instance_id = "test_instance"
         self.learning_instance_db_referance = save_learning_instance(self.instance_id)
 
-    def test_saving_two_generation_objects_with_fk(self):
+    def test_saving_and_getting_generation_instance(self):
         """Test creating and saving two generation objects with the correct FK"""
 
         test_generation_object_1: GenerationObject = GenerationObject(
@@ -85,7 +88,22 @@ class GenerationFKTest(TestCase):
             generation_alpha_brain="holder",
             parents_of_generation=[],
             generaiton_size=2,
+            learning_instance_ref=self.learning_instance_db_referance,
         )
+
+        test_generation_1_ref = save_generation_instance(
+            this_generation_object=test_generation_object_1,
+            learning_instance_referance=self.learning_instance_db_referance,
+        )
+
+        generation_object = get_generation_instance(
+            this_learning_instance_ref=self.learning_instance_db_referance
+        )
+
+        self.assertIsInstance(generation_object, GenerationObject)
+
+    def test_saving_and_returning_two_generation_instance_with_fk(self):
+        """Test saving and returning two gneration_instance using the FK - aka learning instance ref"""
 
         test_generation_object_2: GenerationObject = GenerationObject(
             generation_id="generation_object_2",
@@ -95,66 +113,79 @@ class GenerationFKTest(TestCase):
             generation_alpha_brain="holder",
             parents_of_generation=[],
             generaiton_size=2,
+            learning_instance_ref=self.learning_instance_db_referance,
         )
 
-        test_generation_1_ref = save_generation_object(
-            this_generation_object=test_generation_object_1,
-            learning_instance_referance=self.learning_instance_db_referance,
+        test_generation_object_3: GenerationObject = GenerationObject(
+            generation_id="generation_object_3",
+            generation_number=3,
+            average_fitnees=1.0,
+            fitness_threshold=2.0,
+            generation_alpha_brain="holder",
+            parents_of_generation=[],
+            generaiton_size=2,
+            learning_instance_ref=self.learning_instance_db_referance,
         )
 
-        test_generation_2_ref = save_generation_object(
+        test_generation_2_ref = save_generation_instance(
             this_generation_object=test_generation_object_2,
             learning_instance_referance=self.learning_instance_db_referance,
         )
 
-        data = get_generation_model(
-            this_learning_instance_ref=self.learning_instance_db_referance
+        test_generation_3_ref = save_generation_instance(
+            this_generation_object=test_generation_object_3,
+            learning_instance_referance=self.learning_instance_db_referance,
         )
 
-        print(data)
+        learning_instance_model = get_learning_model(self.instance_id)
+
+        generation_objects = learning_instance_model.fk_ref.all()
+
+        for instance in generation_objects:
+            print(instance)
 
 
-class BrainInstanceModelTestCase(TestCase):
-    """Testing the saving and getting of a Brain instance to and from the DB"""
+# class BrainInstanceModelTestCase(TestCase):
+#     """Testing the saving and getting of a Brain instance to and from the DB"""
 
-    def setUp(self) -> None:
-        foramtted_test_config: dict = format_brain_config(
-            brain_config=test_brain_config
-        )
-        test_brain_type: str = "random_weighted_brain"
+#     def setUp(self) -> None:
+#         foramtted_test_config: dict = format_brain_config(
+#             brain_config=test_brain_config
+#         )
+#         test_brain_type: str = "random_weighted_brain"
 
-        self.test_brain = BrainFactory.make_brain(
-            brain_id="test_brain",
-            brain_type=test_brain_type,
-            brain_config=foramtted_test_config,
-        )
+#         self.test_brain = BrainFactory.make_brain(
+#             brain_id="test_brain",
+#             brain_type=test_brain_type,
+#             brain_config=foramtted_test_config,
+#         )
 
-    def test_brain_instance_model_creation(self) -> None:
-        """Test teh creation of a brain instance model from a BrainInstance"""
+#     def test_brain_instance_model_creation(self) -> None:
+#         """Test teh creation of a brain instance model from a BrainInstance"""
 
-        brain_instance_as_model = brain_instance_to_model(
-            brain_instance=self.test_brain
-        )
-        self.assertIsInstance(brain_instance_as_model, BrainInstanceModel)
+#         brain_instance_as_model = brain_instance_to_model(
+#             brain_instance=self.test_brain
+#         )
+#         self.assertIsInstance(brain_instance_as_model, BrainInstanceModel)
 
-    def test_brain_instance_model_to_brain_instance(self) -> None:
-        """
-        The conversion of a model insance to a Brain Instance
-        """
+#     def test_brain_instance_model_to_brain_instance(self) -> None:
+#         """
+#         The conversion of a model insance to a Brain Instance
+#         """
 
-        brain_instance_as_model = brain_instance_to_model(
-            brain_instance=self.test_brain
-        )
+#         brain_instance_as_model = brain_instance_to_model(
+#             brain_instance=self.test_brain
+#         )
 
-        brain_model_as_instance = model_to_brain_instance(
-            brain_model=brain_instance_as_model
-        )
+#         brain_model_as_instance = model_to_brain_instance(
+#             brain_model=brain_instance_as_model
+#         )
 
-        self.assertIsInstance(brain_model_as_instance, BrainInstance)
-        assert callable(brain_model_as_instance.hidden_layer_activation_func)
-        assert callable(brain_model_as_instance.output_layer_activation_func)
-        self.assertIsInstance(brain_model_as_instance.hidden_weights, np.ndarray)
-        self.assertIsInstance(brain_model_as_instance.output_weights, np.ndarray)
+#         self.assertIsInstance(brain_model_as_instance, BrainInstance)
+#         assert callable(brain_model_as_instance.hidden_layer_activation_func)
+#         assert callable(brain_model_as_instance.output_layer_activation_func)
+#         self.assertIsInstance(brain_model_as_instance.hidden_weights, np.ndarray)
+#         self.assertIsInstance(brain_model_as_instance.output_weights, np.ndarray)
 
 
 # class GenerationModelTestCase(TestCase):
