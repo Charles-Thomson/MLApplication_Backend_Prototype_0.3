@@ -10,6 +10,8 @@ from application.lib.environment.environment_factory import (
 )
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
+from application.lib.storage_objects.generation_object import GenerationObject
+
 from application.lib.agent.agent_generator import new_agent_generator
 
 from application.lib.instance_generation.config_formatting import (
@@ -18,9 +20,17 @@ from application.lib.instance_generation.config_formatting import (
     format_env_config,
 )
 
-# from database.db_functions import save_learning_instance
+from database.internal_use_db_functions.learning_instance_functions import (
+    save_learning_instance,
+)
 
-# from django_main.logging_files.logging_decos import with_fitness_threshold_logging
+from database.internal_use_db_functions.generation_instance_functions import (
+    save_generation_instance,
+)
+
+from database.internal_use_db_functions.brain_instance_functions import (
+    save_brain_instance,
+)
 
 
 class LearningInstance:
@@ -54,7 +64,7 @@ class LearningInstance:
         # the highest fitness brain from the whole instance
         self.alpha_brain: BrainInstance = object
 
-        # learning_instance_db_ref = save_learning_instance(self.instance_id)
+        self.learning_instance_db_ref = save_learning_instance(self.instance_id)
 
     def run_instance(self):
         """run the instance"""
@@ -63,6 +73,13 @@ class LearningInstance:
         new_parents: list[BrainInstance] = []
 
         for current_generation_number in range(self.max_number_of_generations):
+            this_generation_object: GenerationObject = self.new_generation_object()
+
+            this_generation_db_ref = save_generation_instance(
+                this_generation_object=this_generation_object,
+                learning_instance_referance=self.learning_instance_db_ref,
+            )
+
             new_fitness_threshold = self.generate_new_fitness_threshold(new_parents)
 
             agent_generator: object = self.get_new_agent_generator(
@@ -74,23 +91,38 @@ class LearningInstance:
             new_parents = self.run_generation(
                 agent_generator=agent_generator,
                 fitness_threshold=new_fitness_threshold,
+                generation_db_ref=this_generation_db_ref,
             )
 
-            # if new_parents:
-            #     save_full_generation(
-            #         generation_id=f"G-{self.instance_id}-{current_generation_number}",
-            #         generation_brain_instances=new_parents,
-            #         fitness_threshold=self.current_fitness_threshold,
-            #         generation_number=current_generation_number,
-            #     )
             if len(new_parents) <= self.current_generation_failure_threshold:
                 break
 
+            # self.update_generation_model_data
+
         # For logging deco
+        # self.update_learning_model_data
+        # Keep track and do it in ine update ?
         return self.brains
 
+    def new_generation_object(
+        self, current_generation_number: int, new_parents: list[BrainInstance]
+    ) -> GenerationObject:
+        """
+        Create a new generation object with the relervervent data
+        """
+        return GenerationObject(
+            generation_instance_id=f"{self.learning_instance_db_ref}-G{current_generation_number}",
+            generation_number=current_generation_number,
+            average_fitnees=0.0,
+            fitness_threshold=self.current_fitness_threshold,
+            generation_alpha_brain=None,
+            generaiton_size=0,
+            parents_of_generation=new_parents,
+            learning_instance_ref=self.learning_instance_db_ref,
+        )
+
     def run_generation(
-        self, agent_generator: Generator, fitness_threshold: float
+        self, agent_generator: Generator, fitness_threshold: float, generation_db_ref
     ) -> None:
         """
         Run a new generation
@@ -98,25 +130,51 @@ class LearningInstance:
         rtn: new_parents - A list of brain instances tha pass the fitnees threshold
         """
         new_parents: list = []
-        brain_storage: list[BrainInstance] = []
+        all_brains: list[BrainInstance] = []
 
         for agent in agent_generator:
             post_run_agent_brain: object = agent.run_agent()
+
+            # needs to be reworked
+            if not alpha_brain:
+                alpha_brain = post_run_agent_brain
 
             self.brains.append(post_run_agent_brain)  # for logging
 
             if post_run_agent_brain.fitness >= fitness_threshold:
                 new_parents.append(post_run_agent_brain)
 
-            if post_run_agent_brain.fitness >= self.alpha_brain.fitness:
-                self.alpha_brain = post_run_agent_brain
+            if post_run_agent_brain.fitness >= alpha_brain.fitness:
+                alpha_brain = post_run_agent_brain
 
-            brain_storage.append(post_run_agent_brain)
+            # self. save brain instances ?
+
+            all_brains.append[post_run_agent_brain]
 
             if len(new_parents) >= self.new_generation_threshold:
                 break
 
         return new_parents
+
+    # def update_generaiton_model_data() -> None:
+    #     """
+    #     Update the generation models data after the gernation is complete
+    #     """
+
+    # def save_brain_instances() -> None:
+    #     """
+    #     Save all the brain instances
+    #     """
+
+    #     save_brain_instance(
+    #             brain_instance=post_run_agent_brain,
+    #             generation_instance_ref=generation_db_ref,
+    #         )
+
+    # def update_learning_model_data() -> None:
+    #     """
+    #     Update the learning model data post generation completion
+    #     """
 
     # cuurently pulled ti a func for tests - needed ?
     def get_new_agent_generator(
