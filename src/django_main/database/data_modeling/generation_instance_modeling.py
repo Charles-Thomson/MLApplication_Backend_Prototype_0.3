@@ -25,6 +25,7 @@ def generation_instance_to_model(
         average_fitness=generation_data.average_fitnees,
         fitness_threshold=generation_data.fitness_threshold,
         parents_of_generation=jsonpickle.encode(generation_data.parents_of_generation),
+        generation_size=generation_data.generaiton_size,
         generation_alpha_brain=jsonpickle.encode(
             generation_data.generation_alpha_brain
         ),

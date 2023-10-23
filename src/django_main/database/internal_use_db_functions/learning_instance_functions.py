@@ -1,6 +1,7 @@
 """The internal functions relating to the learning_instance DB operations"""
 
 from database.models import LearningInstanceModel
+from django.db.models import F
 
 from database.data_modeling.learning_instance_modeling import (
     learning_instance_to_model,
@@ -58,3 +59,20 @@ def get_learning_model(learning_instance_id: str) -> LearningInstanceModel:
     print(learing_instance_model)
 
     return learing_instance_model
+
+
+def update_learning_instance_model_by_id(
+    learning_instance_id: str, new_alpha_brain: object
+) -> None:
+    """
+    Update a learning instance - selected by learning instance id
+    """
+
+    learning_instance: LearningInstanceModel = LearningInstanceModel.objects.get(
+        learning_instance_id=learning_instance_id
+    )
+
+    learning_instance_id.alpha_brain = new_alpha_brain
+    learning_instance.number_of_generations = F("number_of_generations") + 1
+
+    learning_instance.save(update_fields=["alpha_brain", "number_of_generations"])

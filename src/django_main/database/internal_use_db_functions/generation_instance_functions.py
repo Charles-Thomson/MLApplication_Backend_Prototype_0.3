@@ -1,5 +1,6 @@
 """The internal functions relating to the generation_instance DB operations"""
 
+import jsonpickle
 from database.models import GenerationInstanceModel
 from database.data_modeling.generation_instance_modeling import (
     generation_instance_to_model,
@@ -78,3 +79,35 @@ def get_generation_model_with_id(
     print(generation_instance_model)
 
     return generation_instance_model
+
+
+def update_generation_model_by_id(
+    generation_instace_id: str, update_data: dict
+) -> None:
+    """
+    Update a given generation instance - selected by the generation instances id
+    """
+
+    generation_instance: GenerationInstanceModel = GenerationInstanceModel.objects.get(
+        generation_instace_id=generation_instace_id
+    )
+    jsonpickle.encode(update_data["generation_alpha_brain"])
+    generation_instance.average_fitness = update_data["averag_fitness"]
+    generation_instance.fitness_threshold = update_data["fitness_threshold"]
+    generation_instance.generation_alpha_brain = jsonpickle.encode(
+        update_data["generation_alpha_brain"]
+    )
+    generation_instance.generation_size = update_data["generation_size"]
+    generation_instance.parents_of_generation = jsonpickle.encode(
+        update_data["parents_of_generation"]
+    )
+
+    generation_instance.save(
+        update_fields=[
+            "average_fitness",
+            "fitness_threshold",
+            "generation_alpha_brain",
+            "generation_size",
+            "parents_of_generation",
+        ]
+    )
