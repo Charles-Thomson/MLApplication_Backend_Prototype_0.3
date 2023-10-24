@@ -10,8 +10,6 @@ from application.lib.environment.environment_factory import (
 )
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
-from application.lib.storage_objects.generation_object import GenerationObject
-
 from application.lib.agent.agent_generator import new_agent_generator
 
 from application.lib.instance_generation.config_formatting import (
@@ -21,12 +19,12 @@ from application.lib.instance_generation.config_formatting import (
 )
 
 from database.internal_use_db_functions.learning_instance_functions import (
-    save_learning_instance,
+    new_learning_instance_model,
     update_learning_instance_model_by_id,
 )
 
 from database.internal_use_db_functions.generation_instance_functions import (
-    save_generation_instance,
+    new_generation_instance_model,
     update_generation_model_by_id,
 )
 
@@ -66,7 +64,7 @@ class LearningInstance:
         # the highest fitness brain from the whole instance
         self.alpha_brain: BrainInstance = object
 
-        self.learning_instance_db_ref = save_learning_instance(self.instance_id)
+        self.learning_instance_db_ref = new_learning_instance_model(self.instance_id)
 
         self.number_of_generations: int = 0
         self.alpha_brains: list[BrainInstance] = []
@@ -80,16 +78,13 @@ class LearningInstance:
 
         for current_generation_number in range(self.max_number_of_generations):
             new_generation_id: str = (
-                f"{self.learning_instance_db_ref}-G{current_generation_number}"
-            )
-            this_generation_object: GenerationObject = self.new_generation_object(
-                current_generation_number=current_generation_number,
-                generation_instance_id=new_generation_id,
+                f"L{self.learning_instance_db_ref}-G{current_generation_number}"
             )
 
-            this_generation_db_ref = save_generation_instance(
-                this_generation_object=this_generation_object,
+            this_generation_db_ref = new_generation_instance_model(
+                this_generation_object=new_generation_id,
                 learning_instance_referance=self.learning_instance_db_ref,
+                generation_number=current_generation_number,
             )
 
             new_fitness_threshold = self.generate_new_fitness_threshold(new_parents)
@@ -119,27 +114,6 @@ class LearningInstance:
 
         # For logging deco
         return self.brains
-
-    # This will be refactored out
-    def new_generation_object(
-        self,
-        generation_instance_id: str,
-        current_generation_number: int,
-        new_parents: list[BrainInstance],
-    ) -> GenerationObject:
-        """
-        Create a new generation object with the relervervent data
-        """
-        return GenerationObject(
-            generation_instance_id=generation_instance_id,
-            generation_number=current_generation_number,
-            average_fitnees=0.0,
-            fitness_threshold=self.current_fitness_threshold,
-            generation_alpha_brain=None,
-            generaiton_size=0,
-            parents_of_generation=new_parents,
-            learning_instance_ref=self.learning_instance_db_ref,
-        )
 
     def run_generation(
         self,

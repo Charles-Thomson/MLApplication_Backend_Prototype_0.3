@@ -57,7 +57,7 @@ class GenerationInstanceModel(models.Model):
     fitness_threshold = models.CharField(max_length=350)
     parents_of_generation = models.JSONField(default=dict)
     generation_alpha_brain = models.JSONField(default=dict)
-    generation_size = models.CharField(max_length=350)
+    generation_size = models.CharField(max_length=350, default=0)
     learning_instance_ref = models.ForeignKey(
         LearningInstanceModel,
         on_delete=models.CASCADE,

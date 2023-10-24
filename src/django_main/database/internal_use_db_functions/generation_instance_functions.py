@@ -1,35 +1,47 @@
 """The internal functions relating to the generation_instance DB operations"""
 
+import json
 import jsonpickle
 from database.models import GenerationInstanceModel
 from database.data_modeling.generation_instance_modeling import (
-    generation_instance_to_model,
-    generation_model_to_instance,
+    generation_data_to_model,
+    generation_model_to_data,
 )
 
 
-from application.lib.storage_objects.generation_object import GenerationObject
-
-
-def save_generation_instance(
-    this_generation_object: GenerationObject, learning_instance_referance: str
-) -> GenerationInstanceModel:
+def new_generation_instance_model(
+    generation_instance_id: str,
+    generation_number: int,
+    learning_instance_referance: str,
+) -> json:
     """
-    Save a generation_instace_object to the database
+    Create a new gneneration instance model
+    var: generation_instance_id - the string used as the id of the generation model
+    var: learning_instance_referance - used as the FK in the generation instance model
+    rtn: model - used as the FK by BrainInstanceModels
     """
 
-    new_generation_model_ref: GenerationInstanceModel = generation_instance_to_model(
-        this_generation_object, learning_instance_referance
-    )
+    generation_instance_data: dict = {
+        "generation_instance_id": generation_instance_id,
+        "generation_number": generation_number,
+        "average_fitness": 0.0,
+        "fitness_threshold": 0.0,
+        "parents_of_generation": [],
+        "generation_size": 0,
+        "generation_alpha_brain": None,
+        "learning_instance_ref": learning_instance_referance,
+    }
 
-    new_generation_model_ref.save()
+    model = generation_data_to_model(generation_instance_data)
 
-    return new_generation_model_ref
+    model.save()
+
+    return model
 
 
-def get_generation_instance_with_forign_key(
+def get_generation_data_with_forign_key(
     this_learning_instance_ref: str,
-) -> GenerationObject:
+) -> json:
     """
     Get a generation model and return it as a genertion_object
     """
@@ -40,9 +52,7 @@ def get_generation_instance_with_forign_key(
         )
     )
 
-    rtn_data = generation_model_to_instance(generation_instance_model)
-
-    return rtn_data
+    return generation_model_to_data(generation_instance_model)
 
 
 def get_generation_model_with_forign_key(
@@ -58,9 +68,22 @@ def get_generation_model_with_forign_key(
         )
     )
 
-    print(generation_instance_model)
-
     return generation_instance_model
+
+
+def get_generation_data_with_id(
+    generation_instance_id: str,
+) -> GenerationInstanceModel:
+    """
+    Get a generation model data with a given id
+    """
+
+    generation_instance_model: GenerationInstanceModel = (
+        GenerationInstanceModel.objects.get(
+            generation_instance_id=generation_instance_id
+        )
+    )
+    return generation_model_to_data(generation_instance_model)
 
 
 def get_generation_model_with_id(
@@ -75,24 +98,21 @@ def get_generation_model_with_id(
             generation_instance_id=generation_instance_id
         )
     )
-
-    print(generation_instance_model)
-
     return generation_instance_model
 
 
 def update_generation_model_by_id(
-    generation_instace_id: str, update_data: dict
+    generation_instance_id: str, update_data: dict
 ) -> None:
     """
     Update a given generation instance - selected by the generation instances id
     """
 
     generation_instance: GenerationInstanceModel = GenerationInstanceModel.objects.get(
-        generation_instace_id=generation_instace_id
+        generation_instance_id=generation_instance_id
     )
     jsonpickle.encode(update_data["generation_alpha_brain"])
-    generation_instance.average_fitness = update_data["averag_fitness"]
+    generation_instance.average_fitness = update_data["average_fitness"]
     generation_instance.fitness_threshold = update_data["fitness_threshold"]
     generation_instance.generation_alpha_brain = jsonpickle.encode(
         update_data["generation_alpha_brain"]

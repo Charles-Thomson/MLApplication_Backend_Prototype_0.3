@@ -1,6 +1,6 @@
 # TODO Today;
-# 1. Remove the generation_instance_object - refactor down to work the same as the learning instance_save()
-# 2. Write tests for the updating of data for the generation and Learning instace models
+# DONE 1. Remove the generation_instance_object - refactor down to work the same as the learning instance_save()
+# 2. Write tests for the updating of data for the generation and Learning instance models
 # 3. Clean up the instance_generation_main
 # - Currently very messy
 # Need to work out alpha_brain
@@ -13,6 +13,9 @@
 # Only passing in the generation ID - which is then saved to be used in the update
 
 # The process of generation_model creation/savin/ updating is messy and needs to be refactored
+
+# Can some of the data_modeling/interal_functions be refacroted down ? - can change the function to get
+# data back from Learning instance and generational mdodels to use a factory on the serializers ?
 
 # Is the generation id the same as the DB ref for the data base ??
 

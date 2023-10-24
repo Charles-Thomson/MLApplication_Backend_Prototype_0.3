@@ -1,13 +1,10 @@
 """ Data modeling for the learning instance modesl/objects"""
+import json
 from database.serializers import ModelToLearningInstanceSerializer
 from database.models import DatabaseModelsFactory, LearningInstanceModel
 
-from application.lib.storage_objects.learning_instance_object import (
-    LearningInstanceObject,
-)
 
-
-def learning_instance_to_model(
+def learning_instance_data_to_model(
     learning_instance_data: dict,
 ) -> LearningInstanceModel:
     """
@@ -26,15 +23,11 @@ def learning_instance_to_model(
     return new_model
 
 
-def learning_model_to_instance(
+def learning_model_to_data(
     this_model: LearningInstanceModel,
-) -> LearningInstanceObject:
+) -> json:
     """
     Convert a learning instance model to a learning instance Object
     """
 
-    model_data: dict = ModelToLearningInstanceSerializer(this_model).data
-
-    new_object: LearningInstanceObject = LearningInstanceObject(*model_data)
-
-    return new_object
+    return ModelToLearningInstanceSerializer(this_model).data

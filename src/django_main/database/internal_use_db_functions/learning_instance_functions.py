@@ -1,20 +1,17 @@
 """The internal functions relating to the learning_instance DB operations"""
 
+import json
 from database.models import LearningInstanceModel
 from django.db.models import F
 
 from database.data_modeling.learning_instance_modeling import (
-    learning_instance_to_model,
-    learning_model_to_instance,
-)
-
-from application.lib.storage_objects.learning_instance_object import (
-    LearningInstanceObject,
+    learning_instance_data_to_model,
+    learning_model_to_data,
 )
 
 
 # this is building the instance here via an id - not sure if correct approach
-def save_learning_instance(
+def new_learning_instance_model(
     learning_instance_id: str,
 ) -> LearningInstanceModel:
     """
@@ -28,26 +25,24 @@ def save_learning_instance(
         "number_of_generations": 0,
     }
 
-    model = learning_instance_to_model(learning_instance_data)
+    model = learning_instance_data_to_model(learning_instance_data)
 
     model.save()
 
     return model
 
 
-def get_learning_instance(learning_instance_id: int) -> LearningInstanceObject:
+def get_learning_data_by_id(learning_instance_id: int) -> json:
     """Get a brain Instance back from the model"""
 
     learing_instance_model: LearningInstanceModel = LearningInstanceModel.objects.get(
         learning_instance_id=learning_instance_id
     )
 
-    rtn_data = learning_model_to_instance(learing_instance_model)
-
-    return rtn_data
+    return learning_model_to_data(learing_instance_model)
 
 
-def get_learning_model(learning_instance_id: str) -> LearningInstanceModel:
+def get_learning_model_by_id(learning_instance_id: str) -> LearningInstanceModel:
     """
     Get a learning instance model based on a given id
     """
@@ -55,8 +50,6 @@ def get_learning_model(learning_instance_id: str) -> LearningInstanceModel:
     learing_instance_model: LearningInstanceModel = LearningInstanceModel.objects.get(
         learning_instance_id=learning_instance_id
     )
-
-    print(learing_instance_model)
 
     return learing_instance_model
 
@@ -72,7 +65,7 @@ def update_learning_instance_model_by_id(
         learning_instance_id=learning_instance_id
     )
 
-    learning_instance_id.alpha_brain = new_alpha_brain
+    learning_instance.alpha_brain = new_alpha_brain
     learning_instance.number_of_generations = F("number_of_generations") + 1
 
     learning_instance.save(update_fields=["alpha_brain", "number_of_generations"])

@@ -1,4 +1,5 @@
 """Test relating to the BrainInstance model and object"""
+import json
 from django.test import TestCase
 import numpy as np
 
@@ -18,9 +19,10 @@ from database.models import (
 )
 
 from database.internal_use_db_functions.learning_instance_functions import (
-    save_learning_instance,
-    get_learning_instance,
-    get_learning_model,
+    new_learning_instance_model,
+    get_learning_data_by_id,
+    get_learning_model_by_id,
+    update_learning_instance_model_by_id,
 )
 
 
@@ -29,12 +31,11 @@ from database.data_modeling.brain_instance_modeling import (
 )
 
 from database.internal_use_db_functions.generation_instance_functions import (
-    save_generation_instance,
+    new_generation_instance_model,
+    update_generation_model_by_id,
+    get_generation_data_with_id,
+    get_generation_model_with_forign_key,
     get_generation_model_with_id,
-)
-
-from application.lib.storage_objects.generation_object import (
-    GenerationObject,
 )
 
 from application.lib.agent_brain.brain_factory import BrainFactory
@@ -49,24 +50,32 @@ class BrainInstanceModelTestCase(TestCase):
 
     def setUp(self) -> None:
         self.instance_id = "test_learning_instance_ref"
-        self.learning_instance_db_referance = save_learning_instance(self.instance_id)
-
-        self.generation_instance_id = "test_generation_instance_ref"
-
-        self.test_generation_object_config: GenerationObject = GenerationObject(
-            generation_instance_id=self.generation_instance_id,
-            generation_number=1,
-            average_fitnees=1.0,
-            fitness_threshold=2.0,
-            generation_alpha_brain="holder",
-            parents_of_generation=[],
-            generaiton_size=2,
-            learning_instance_ref=self.learning_instance_db_referance,
+        self.learning_instance_db_referance = new_learning_instance_model(
+            self.instance_id
         )
 
-        self.generation_instance_db_referance = save_generation_instance(
-            this_generation_object=self.test_generation_object_config,
+        current_generation_number: int = 1
+        self.generation_instance_id = (
+            f"L{self.instance_id}-G{current_generation_number}"
+        )
+
+        self.test_generation_model_db_ref: json = new_generation_instance_model(
+            generation_instance_id=self.generation_instance_id,
+            generation_number=current_generation_number,
             learning_instance_referance=self.learning_instance_db_referance,
+        )
+
+        update_test_data: dict = {
+            "average_fitness": 3.5,
+            "fitness_threshold": 4.0,
+            "generation_alpha_brain": "Brain_2",
+            "generation_size": 2,
+            "parents_of_generation": ["Brain_1", "brain_2"],
+        }
+
+        update_generation_model_by_id(
+            generation_instance_id=self.generation_instance_id,
+            update_data=update_test_data,
         )
 
         test_brain_config: dict = {
@@ -82,41 +91,35 @@ class BrainInstanceModelTestCase(TestCase):
             brain_config=test_brain_config
         )
         self.test_brain_type: str = "random_weighted_brain"
+        self.brain_id = f"L{self.instance_id}-G{self.generation_instance_id}-B1"
 
         self.test_brain = BrainFactory.make_brain(
-            brain_id="test_brain",
+            brain_id=self.brain_id,
             brain_type=self.test_brain_type,
             brain_config=self.foramtted_test_config,
         )
 
-    def test_brain_instance_model_creation(self) -> None:
-        """Test teh creation of a brain instance model from a BrainInstance"""
-
-        brain_instance_as_model = brain_instance_to_model(
-            brain_instance=self.test_brain,
-            generation_instance_ref=self.generation_instance_db_referance,
-        )
-        self.assertIsInstance(brain_instance_as_model, BrainInstanceModel)
-
-    def test_saving_and_getting_of_brain_instance(self) -> None:
+    def test_brain_model_creation_and_retrival(self) -> None:
         """
-        Test the conversion of an instance to a model, saving,
-        getting and converting back to an instance
-
+        Test the creation, updating and retrival of a BrainInstanceModel
         """
 
         save_brain_instance(
             brain_instance=self.test_brain,
-            generation_instance_ref=self.generation_instance_db_referance,
+            generation_instance_db_ref=self.test_generation_model_db_ref,
         )
 
-        brain_instance: BrainInstance = get_brain_instance_by_id(brain_id="test_brain")
+        returned_brain_instance: BrainInstance = get_brain_instance_by_id(
+            brain_id=self.brain_id
+        )
 
-        self.assertIsInstance(brain_instance, BrainInstance)
-        assert callable(brain_instance.hidden_layer_activation_func)
-        assert callable(brain_instance.output_layer_activation_func)
-        self.assertIsInstance(brain_instance.hidden_weights, np.ndarray)
-        self.assertIsInstance(brain_instance.output_weights, np.ndarray)
+        self.assertIsInstance(returned_brain_instance, BrainInstance)
+
+        self.assertIsInstance(returned_brain_instance, BrainInstance)
+        assert callable(returned_brain_instance.hidden_layer_activation_func)
+        assert callable(returned_brain_instance.output_layer_activation_func)
+        self.assertIsInstance(returned_brain_instance.hidden_weights, np.ndarray)
+        self.assertIsInstance(returned_brain_instance.output_weights, np.ndarray)
 
     def test_saving_two_brains_and_getting_by_forign_key(self) -> None:
         """
@@ -124,25 +127,25 @@ class BrainInstanceModelTestCase(TestCase):
         """
 
         test_brain_instance_1 = BrainFactory.make_brain(
-            brain_id="test_brain_instance_1",
+            brain_id=f"L{self.instance_id}-G{self.generation_instance_id}-B1",
             brain_type=self.test_brain_type,
             brain_config=self.foramtted_test_config,
         )
 
         test_brain_instance_2 = BrainFactory.make_brain(
-            brain_id="test_brain_instance_2",
+            brain_id=f"L{self.instance_id}-G{self.generation_instance_id}-B2",
             brain_type=self.test_brain_type,
             brain_config=self.foramtted_test_config,
         )
 
         save_brain_instance(
             brain_instance=test_brain_instance_1,
-            generation_instance_ref=self.generation_instance_db_referance,
+            generation_instance_db_ref=self.test_generation_model_db_ref,
         )
 
         save_brain_instance(
             brain_instance=test_brain_instance_2,
-            generation_instance_ref=self.generation_instance_db_referance,
+            generation_instance_db_ref=self.test_generation_model_db_ref,
         )
 
         generation_model = get_generation_model_with_id(
@@ -152,4 +155,5 @@ class BrainInstanceModelTestCase(TestCase):
         brain_instances = generation_model.fk_ref.all()
 
         for x in brain_instances:
+            self.assertIsInstance(x, BrainInstanceModel)
             print(x)

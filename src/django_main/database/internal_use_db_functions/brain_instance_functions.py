@@ -11,12 +11,12 @@ from application.lib.agent_brain.static_state_brain import BrainInstance
 
 
 def save_brain_instance(
-    brain_instance: BrainInstance, generation_instance_ref: str
+    brain_instance: BrainInstance, generation_instance_db_ref: str
 ) -> None:
     """Save the given Brain Instance to the Django DB"""
 
     new_brain_instance_as_model: models.Model = brain_instance_to_model(
-        brain_instance, generation_instance_ref
+        brain_instance, generation_instance_db_ref
     )
 
     new_brain_instance_as_model.save()

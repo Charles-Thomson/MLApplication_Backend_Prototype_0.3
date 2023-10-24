@@ -3,14 +3,15 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 
 from database.models import BrainInstanceModel
-from database.data_modeling.brain_instance_modeling import (
-    brain_instance_to_model,
-    brain_model_to_instance,
-)
-from database.data_modeling.generation_instance_modeling import (
-    generation_instance_to_model,
-    generation_model_to_instance,
-)
+
+# from database.data_modeling.brain_instance_modeling import (
+#     brain_instance_to_model,
+#     brain_model_to_instance,
+# )
+# from database.data_modeling.generation_instance_modeling import (
+#     generation_instance_to_model,
+#     generation_model_to_instance,
+# )
 
 
 def index(request):

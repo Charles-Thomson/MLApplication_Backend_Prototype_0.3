@@ -1,24 +1,21 @@
 """Test related to the Generation instance model and object"""
+import json
 from django.test import TestCase
 
 from database.internal_use_db_functions.learning_instance_functions import (
-    save_learning_instance,
-    get_learning_instance,
-    get_learning_model,
+    new_learning_instance_model,
+    get_learning_model_by_id,
 )
 
 from database.models import GenerationInstanceModel
 
 
 from database.internal_use_db_functions.generation_instance_functions import (
-    save_generation_instance,
-    get_generation_instance_with_forign_key,
+    new_generation_instance_model,
+    update_generation_model_by_id,
+    get_generation_data_with_id,
     get_generation_model_with_forign_key,
     get_generation_model_with_id,
-)
-
-from application.lib.storage_objects.generation_object import (
-    GenerationObject,
 )
 
 
@@ -27,71 +24,85 @@ class GenerationInstanceModelTests(TestCase):
 
     def setUp(self) -> None:
         self.instance_id = "test_instance"
-        self.learning_instance_db_referance = save_learning_instance(self.instance_id)
-
-    def test_saving_and_getting_generation_instance(self):
-        """Test creating and saving two generation objects with the correct FK"""
-
-        test_generation_object_1: GenerationObject = GenerationObject(
-            generation_instance_id="generation_object_1",
-            generation_number=1,
-            average_fitnees=1.0,
-            fitness_threshold=2.0,
-            generation_alpha_brain="holder",
-            parents_of_generation=[],
-            generaiton_size=2,
-            learning_instance_ref=self.learning_instance_db_referance,
+        self.learning_instance_db_referance = new_learning_instance_model(
+            self.instance_id
         )
 
-        test_generation_1_ref = save_generation_instance(
-            this_generation_object=test_generation_object_1,
+    def test_create_update_retrive_generation_model(self) -> GenerationInstanceModel:
+        """
+        test the creation of a generation instance model
+        """
+        current_generation_number_1 = 1
+        generation_instance_id_1 = f"L{self.instance_id}-G{current_generation_number_1}"
+
+        test_generation_model_ref: json = new_generation_instance_model(
+            generation_instance_id=generation_instance_id_1,
+            generation_number=current_generation_number_1,
             learning_instance_referance=self.learning_instance_db_referance,
         )
 
-        generation_object = get_generation_instance_with_forign_key(
-            this_learning_instance_ref=self.learning_instance_db_referance
+        update_test_data: dict = {
+            "average_fitness": 3.5,
+            "fitness_threshold": 4.0,
+            "generation_alpha_brain": "Brain_2",
+            "generation_size": 2,
+            "parents_of_generation": ["Brain_1", "brain_2"],
+        }
+
+        update_generation_model_by_id(
+            generation_instance_id=generation_instance_id_1,
+            update_data=update_test_data,
         )
 
-        self.assertIsInstance(generation_object, GenerationObject)
+        returned_generation_data: dict = get_generation_data_with_id(
+            generation_instance_id=generation_instance_id_1
+        )
 
-    def test_saving_and_returning_two_generation_instance_with_fk(self):
+        print(returned_generation_data)
+
+    def test_multiple_generation_model_retrival_with_fk(self) -> None:
         """Test saving and returning two gneration_instance using the FK - aka learning instance ref"""
 
-        test_generation_object_2: GenerationObject = GenerationObject(
-            generation_instance_id="generation_object_2",
-            generation_number=2,
-            average_fitnees=1.0,
-            fitness_threshold=2.0,
-            generation_alpha_brain="holder",
-            parents_of_generation=[],
-            generaiton_size=2,
-            learning_instance_ref=self.learning_instance_db_referance,
-        )
+        current_generation_number_1 = 1
+        generation_instance_id_1 = f"L{self.instance_id}-G{current_generation_number_1}"
 
-        test_generation_object_3: GenerationObject = GenerationObject(
-            generation_instance_id="generation_object_3",
-            generation_number=3,
-            average_fitnees=1.0,
-            fitness_threshold=2.0,
-            generation_alpha_brain="holder",
-            parents_of_generation=[],
-            generaiton_size=2,
-            learning_instance_ref=self.learning_instance_db_referance,
-        )
+        current_generation_number_2 = 2
+        generation_instance_id_2 = f"L{self.instance_id}-G{current_generation_number_2}"
 
-        test_generation_2_ref = save_generation_instance(
-            this_generation_object=test_generation_object_2,
+        test_generation_model_ref_1: json = new_generation_instance_model(
+            generation_instance_id=generation_instance_id_1,
+            generation_number=current_generation_number_1,
             learning_instance_referance=self.learning_instance_db_referance,
         )
 
-        test_generation_3_ref = save_generation_instance(
-            this_generation_object=test_generation_object_3,
+        test_generation_model_ref_2: json = new_generation_instance_model(
+            generation_instance_id=generation_instance_id_2,
+            generation_number=current_generation_number_2,
             learning_instance_referance=self.learning_instance_db_referance,
         )
 
-        learning_instance_model = get_learning_model(self.instance_id)
+        update_test_data: dict = {
+            "average_fitness": 3.5,
+            "fitness_threshold": 4.0,
+            "generation_alpha_brain": "Brain_2",
+            "generation_size": 2,
+            "parents_of_generation": ["Brain_1", "brain_2"],
+        }
+
+        update_generation_model_by_id(
+            generation_instance_id=generation_instance_id_1,
+            update_data=update_test_data,
+        )
+
+        update_generation_model_by_id(
+            generation_instance_id=generation_instance_id_2,
+            update_data=update_test_data,
+        )
+
+        learning_instance_model = get_learning_model_by_id(self.instance_id)
 
         generation_objects = learning_instance_model.fk_ref.all()
 
         for instance in generation_objects:
             self.assertIsInstance(instance, GenerationInstanceModel)
+            print(f"FK-Return: {instance}")
