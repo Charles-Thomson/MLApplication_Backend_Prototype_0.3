@@ -91,7 +91,7 @@ class BrainInstanceModelTestCase(TestCase):
             brain_config=test_brain_config
         )
         self.test_brain_type: str = "random_weighted_brain"
-        self.brain_id = f"L{self.instance_id}-G{self.generation_instance_id}-B1"
+        self.brain_id = f"L:{self.instance_id}-G:{self.generation_instance_id}-B:1"
 
         self.test_brain = BrainFactory.make_brain(
             brain_id=self.brain_id,
@@ -127,13 +127,13 @@ class BrainInstanceModelTestCase(TestCase):
         """
 
         test_brain_instance_1 = BrainFactory.make_brain(
-            brain_id=f"L{self.instance_id}-G{self.generation_instance_id}-B1",
+            brain_id=f"L:{self.instance_id}-G:{self.generation_instance_id}-B:1",
             brain_type=self.test_brain_type,
             brain_config=self.foramtted_test_config,
         )
 
         test_brain_instance_2 = BrainFactory.make_brain(
-            brain_id=f"L{self.instance_id}-G{self.generation_instance_id}-B2",
+            brain_id=f"L:{self.instance_id}-G:{self.generation_instance_id}-B:2",
             brain_type=self.test_brain_type,
             brain_config=self.foramtted_test_config,
         )
@@ -156,4 +156,3 @@ class BrainInstanceModelTestCase(TestCase):
 
         for x in brain_instances:
             self.assertIsInstance(x, BrainInstanceModel)
-            print(x)

@@ -2,15 +2,10 @@ from application.lib.instance_generation.instance_generation_main import (
     new_instance,
 )
 
-from logging_files.logging_for_testing import (
-    with_test_brian_logging,
-)
-
 import pytest
 
 
 @pytest.mark.django_db
-@with_test_brian_logging
 def test_full_instance() -> None:
     """
     Testing a full run of an instance
@@ -42,4 +37,5 @@ def test_full_instance() -> None:
 
     test_brains = test_instance.run_instance()
 
-    return test_brains, test_config["env_config"]["env_map"]
+    # will be part of the logging
+    # return test_brains, test_config["env_config"]["env_map"]

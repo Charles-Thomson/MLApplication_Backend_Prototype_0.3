@@ -27,6 +27,7 @@ class LearningInsanceModelTests(TestCase):
         update_learning_instance_model_by_id(
             learning_instance_id=self.learning_instance_id,
             new_alpha_brain="alpha_brain",
+            total_generations=1,
         )
 
         learning_instance_data = get_learning_data_by_id(self.learning_instance_id)

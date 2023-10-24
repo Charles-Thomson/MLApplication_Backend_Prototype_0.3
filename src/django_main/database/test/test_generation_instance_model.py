@@ -33,7 +33,9 @@ class GenerationInstanceModelTests(TestCase):
         test the creation of a generation instance model
         """
         current_generation_number_1 = 1
-        generation_instance_id_1 = f"L{self.instance_id}-G{current_generation_number_1}"
+        generation_instance_id_1 = (
+            f"L:{self.instance_id}-G:{current_generation_number_1}"
+        )
 
         test_generation_model_ref: json = new_generation_instance_model(
             generation_instance_id=generation_instance_id_1,
@@ -58,16 +60,18 @@ class GenerationInstanceModelTests(TestCase):
             generation_instance_id=generation_instance_id_1
         )
 
-        print(returned_generation_data)
-
     def test_multiple_generation_model_retrival_with_fk(self) -> None:
         """Test saving and returning two gneration_instance using the FK - aka learning instance ref"""
 
         current_generation_number_1 = 1
-        generation_instance_id_1 = f"L{self.instance_id}-G{current_generation_number_1}"
+        generation_instance_id_1 = (
+            f"L:{self.instance_id}-G:{current_generation_number_1}"
+        )
 
         current_generation_number_2 = 2
-        generation_instance_id_2 = f"L{self.instance_id}-G{current_generation_number_2}"
+        generation_instance_id_2 = (
+            f"L:{self.instance_id}-G:{current_generation_number_2}"
+        )
 
         test_generation_model_ref_1: json = new_generation_instance_model(
             generation_instance_id=generation_instance_id_1,
@@ -105,4 +109,3 @@ class GenerationInstanceModelTests(TestCase):
 
         for instance in generation_objects:
             self.assertIsInstance(instance, GenerationInstanceModel)
-            print(f"FK-Return: {instance}")
