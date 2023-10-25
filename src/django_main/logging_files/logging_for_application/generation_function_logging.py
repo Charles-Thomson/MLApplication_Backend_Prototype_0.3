@@ -68,7 +68,7 @@ def run_generation_function_wrapper(
         @wraps(func)
         def wrapper(*args, **kwargs) -> None:
             pre_call_function(func)
-            new_parents, all_brains = func(*args, **kwargs)
+            viability, new_parents, all_brains = func(*args, **kwargs)
             for brain in new_parents:
                 fit_brains_logger.info(
                     f"generation number: {brain.current_generation_number} - Brain id {brain.brain_id} - Brain fitness {brain.fitness} - Path: {brain.traversed_path}"
@@ -81,7 +81,7 @@ def run_generation_function_wrapper(
 
             post_call_function(func)
 
-            return new_parents
+            return viability, new_parents, all_brains
 
         return wrapper
 

@@ -13,6 +13,7 @@ def new_generation_instance_model(
     generation_instance_id: str,
     generation_number: int,
     learning_instance_referance: str,
+    parents_of_generation: list,
 ) -> json:
     """
     Create a new gneneration instance model
@@ -26,7 +27,7 @@ def new_generation_instance_model(
         "generation_number": generation_number,
         "average_fitness": 0.0,
         "fitness_threshold": 0.0,
-        "parents_of_generation": [],
+        "parents_of_generation": parents_of_generation,
         "generation_size": 0,
         "generation_alpha_brain": None,
         "learning_instance_ref": learning_instance_referance,
@@ -118,9 +119,6 @@ def update_generation_model_by_id(
         update_data["generation_alpha_brain"]
     )
     generation_instance.generation_size = update_data["generation_size"]
-    generation_instance.parents_of_generation = jsonpickle.encode(
-        update_data["parents_of_generation"]
-    )
 
     generation_instance.save(
         update_fields=[
@@ -128,6 +126,5 @@ def update_generation_model_by_id(
             "fitness_threshold",
             "generation_alpha_brain",
             "generation_size",
-            "parents_of_generation",
         ]
     )

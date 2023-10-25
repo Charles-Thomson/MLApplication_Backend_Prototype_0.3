@@ -1,26 +1,13 @@
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-65 - Fitness: 4.05 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-64 - Fitness: 3.75 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-95 - Fitness: 3.45 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-82 - Fitness: 3.4499999999999997 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-128 - Fitness: 3.4499999999999997 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-153 - Fitness: 3.4499999999999997 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-156 - Fitness: 3.4499999999999997 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-15 - Fitness: 3.3 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-134 - Fitness: 3.3 Threshold: 3.0
-INFO :: run_instance :: Generation number: 0 - ID : B-L:73a38eac-e-0-137 - Fitness: 3.3 Threshold: 3.0
-INFO :: run_instance :: Generation Number: 0 - Number of Fit brains: 10 
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-0 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-3 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-53 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-74 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-78 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-83 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-86 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-96 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-97 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation number: 1 - ID : B-L:73a38eac-e-1-98 - Fitness: 4.05 Threshold: 3.8444999999999996
-INFO :: run_instance :: Generation Number: 1 - Number of Fit brains: 10 
-INFO :: run_instance :: Generation Number: 2 - Number of Fit brains: 0 
-INFO :: run_instance :: BREAK - Did not reach minimum number of parents for threshold No parents 0 Threshold: 10
-INFO :: run_instance :: END OF INSTANCE - Generations created: 2
-INFO :: run_instance :: Alpha_brain_fitness =  4.05
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-122 - Fitness: 3.9 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-52 - Fitness: 3.75 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-26 - Fitness: 3.6 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-81 - Fitness: 3.5999999999999996 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-150 - Fitness: 3.5999999999999996 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-57 - Fitness: 3.45 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-98 - Fitness: 3.45 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-49 - Fitness: 3.4499999999999997 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-131 - Fitness: 3.4499999999999997 Threshold: 3.9270000000000005
+INFO :: run_instance :: Generation number: 0 - ID : B-L:7d6fc6d2-c-0-157 - Fitness: 3.4499999999999997 Threshold: 3.9270000000000005
+INFO :: run_instance :: BREAK - The generation is not viable due to an inificent number of brains passing the fitness threshold
+INFO :: run_instance :: END OF INSTANCE - Generations created: 1
+INFO :: run_instance :: Alpha_brain_fitness =  6.750000000000001

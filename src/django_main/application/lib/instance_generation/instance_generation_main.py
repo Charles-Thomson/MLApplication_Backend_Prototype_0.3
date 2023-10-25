@@ -95,6 +95,7 @@ class LearningInstance:
                 generation_instance_id=new_generation_id,
                 learning_instance_referance=self.learning_instance_db_ref,
                 generation_number=current_generation_number,
+                parents_of_generation=new_parents,  # Need to add in on other side
             )
 
             agent_generator: object = self.agent_generater_partial(
@@ -104,39 +105,37 @@ class LearningInstance:
                 instance_id=self.instance_id,
             )
 
-            new_parents = self.run_generation(
+            generation_viability, alpha_brains_from_generation, _ = self.run_generation(
                 agent_generator=agent_generator,
                 fitness_threshold=fitness_threshold,
                 generation_db_ref=this_generation_db_ref,
                 generation_id=new_generation_id,
             )
 
-            for brain in new_parents:
-                debug_logger.info(
-                    f"Generation number: {brain.current_generation_number} - ID : {brain.brain_id} - Fitness: {brain.fitness} Threshold: {fitness_threshold}"
-                )
+            potential_new_alpha = alpha_brains_from_generation[0]
 
-            debug_logger.info(
-                f"Generation Number: {current_generation_number} - Number of Fit brains: {len(new_parents)} "
-            )
+            if not current_alpha_brain:
+                current_alpha_brain = potential_new_alpha
 
-            if len(new_parents) < self.current_generation_failure_threshold:
+            elif potential_new_alpha.fitness > current_alpha_brain.fitness:
+                current_alpha_brain = potential_new_alpha
+
+            if generation_viability is False:
                 debug_logger.info(
-                    f"BREAK - Did not reach minimum number of parents for threshold No parents {len(new_parents)} Threshold: {self.current_generation_failure_threshold}"
+                    "BREAK - The generation is not viable due to an inificent number of brains passing the fitness threshold"
                 )
                 break
 
-            potentail_alpha = new_parents[0]
-
-            if not current_alpha_brain:
-                current_alpha_brain = potentail_alpha
-
-            if potentail_alpha.fitness > current_alpha_brain.fitness:
-                current_alpha_brain = potentail_alpha
+            new_parents = alpha_brains_from_generation
 
             fitness_threshold = self.generate_new_fitness_threshold(
                 parents=new_parents, generation_number=current_generation_number
             )
+
+            for brain in alpha_brains_from_generation:
+                debug_logger.info(
+                    f"Generation number: {brain.current_generation_number} - ID : {brain.brain_id} - Fitness: {brain.fitness} Threshold: {fitness_threshold}"
+                )
 
         update_learning_instance_model_by_id(
             learning_instance_id=self.instance_id,
@@ -164,15 +163,15 @@ class LearningInstance:
         var: agent_generator
         rtn: new_parents - A list of brain instances tha pass the fitnees threshold
         """
-        new_parents: list = []
         all_brains: list = []
-        alpha_brain: BrainInstance = None
+        generation_alphas_brains: list[BrainInstance] = []
+        generation_passed_viability: bool = False
 
         for agent in agent_generator:
             post_run_agent_brain: object = agent.run_agent()
 
             if post_run_agent_brain.fitness >= fitness_threshold:
-                new_parents.append(post_run_agent_brain)
+                generation_alphas_brains.append(post_run_agent_brain)
 
             save_brain_instance(
                 post_run_agent_brain, generation_instance_db_ref=generation_db_ref
@@ -180,27 +179,30 @@ class LearningInstance:
 
             all_brains.append(post_run_agent_brain)
 
-            if len(new_parents) >= self.new_generation_threshold:
-                break
+            if len(generation_alphas_brains) >= self.new_generation_threshold:
+                generation_alphas_brains = sorted(
+                    generation_alphas_brains, key=lambda x: x.fitness, reverse=True
+                )
+                generation_passed_viability = True
+                return generation_passed_viability, generation_alphas_brains, all_brains
 
-        sorted_parents: list[BrainInstance] = sorted(
-            new_parents, key=lambda x: x.fitness, reverse=True
-        )
+        generation_alphas_brains = sorted(
+            all_brains, key=lambda x: x.fitness, reverse=True
+        )[:10]
 
-        # refactor out ?
+        alpha_brain: BrainInstance = generation_alphas_brains[0]
         update_data: dict = {
             "average_fitness": self.get_generation_fitness_average(parents=all_brains),
             "fitness_threshold": fitness_threshold,
             "generation_alpha_brain": alpha_brain,
             "generation_size": len(all_brains),
-            "parents_of_generation": sorted_parents,
         }
 
         update_generation_model_by_id(
             generation_instance_id=generation_id, update_data=update_data
         )
 
-        return sorted_parents, all_brains
+        return generation_passed_viability, generation_alphas_brains, all_brains
 
     @with_fitness_threshold_logging
     def generate_new_fitness_threshold(
