@@ -1,0 +1,26 @@
+INFO :: pre_call :: New fit generation brains
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-65 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-64 - Brain fitness 3.75 - Path: [(1, 1), (0, 2), (1, 2), (2, 1), (3, 1), (4, 1), (5, 1)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-95 - Brain fitness 3.45 - Path: [(1, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-82 - Brain fitness 3.4499999999999997 - Path: [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-128 - Brain fitness 3.4499999999999997 - Path: [(1, 1), (1, 2), (1, 3), (2, 4), (1, 5)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-153 - Brain fitness 3.4499999999999997 - Path: [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-156 - Brain fitness 3.4499999999999997 - Path: [(1, 1), (1, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-15 - Brain fitness 3.3 - Path: [(1, 1), (1, 2), (1, 3), (2, 2)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-134 - Brain fitness 3.3 - Path: [(1, 1), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2), (1, 3), (0, 2)]
+INFO :: wrapper :: generation number: 0 - Brain id B-L:73a38eac-e-0-137 - Brain fitness 3.3 - Path: [(1, 1), (1, 2), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3), (1, 3)]
+INFO :: post_call :: Generation eneded
+INFO :: pre_call :: New fit generation brains
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-0 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-3 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-53 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-74 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-78 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-83 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-86 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-96 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-97 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: wrapper :: generation number: 1 - Brain id B-L:73a38eac-e-1-98 - Brain fitness 4.05 - Path: [(1, 1), (0, 2), (1, 2), (2, 3), (1, 3), (0, 3), (0, 2), (0, 1), (0, 0), (0, -1)]
+INFO :: post_call :: Generation eneded
+INFO :: pre_call :: New fit generation brains
+INFO :: post_call :: Generation eneded

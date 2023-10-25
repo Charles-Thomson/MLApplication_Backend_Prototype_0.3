@@ -1,13 +1,16 @@
-Running tests should be done from within the Django_main package
+"""Test a long run of the overall system """
 
-have to set the DJANGO_SETTINGS_MODULE at the django_main level
-cmd -> 
-set DJANGO_SETTINGS_MODULE=django_main.settings 
+from application.lib.instance_generation.instance_generation_main import new_instance
+
+import pytest
 
 
-The config file passed into the main system is the following format 
-
-test_config = {
+@pytest.mark.django_db
+def test_long_duration_instance() -> None:
+    """
+    Testing a full run of an instance
+    """
+    test_config = {
         "env_type": "Static_State",
         "agent_type": "Static_State",
         "env_config": {
@@ -16,10 +19,10 @@ test_config = {
             "start_location": "1,1",
         },
         "instance_config": {
-            "max_number_of_genrations": "5",
-            "max_generation_size": "100",
-            "fitness_threshold": "2",
-            "new_generation_threshold": "4",
+            "max_number_of_genrations": "40",
+            "max_generation_size": "200",
+            "fitness_threshold": "3",
+            "new_generation_threshold": "10",
         },
         "brain_config": {
             "weight_init_huristic": "he_weight",
@@ -30,3 +33,14 @@ test_config = {
             "hidden_to_output_connections": "[9,9]",
         },
     }
+    test_instance = new_instance(config=test_config)
+
+    test_instance.run_instance()
+
+
+# test_map
+# 1, 1, 1, 1, 1,
+# 1, 1, 1, 3, 1,
+# 1, 1, 2, 1, 1,
+# 1, 1, 2, 1, 1,
+# 1, 3, 1, 3, 1

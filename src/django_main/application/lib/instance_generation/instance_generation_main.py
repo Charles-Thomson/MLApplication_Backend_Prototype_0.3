@@ -5,6 +5,23 @@ import uuid
 
 from functools import partial
 
+
+from logging_files.run_time_logging.function_call_time_logging import (
+    with_run_time_logging,
+)
+
+from logging_files.logging_for_application.generation_function_logging import (
+    with_brain_logging,
+)
+
+from logging_files.logging_for_application.fitness_threshold_logging import (
+    with_fitness_threshold_logging,
+)
+
+from logging_files.logging_for_testing.logging_for_testing import (
+    debug_logger,
+)
+
 from application.lib.environment.environment_factory import (
     EnvironmentFactory,
 )
@@ -45,7 +62,7 @@ class LearningInstance:
     ):
         self.instance_id: str = f"L:{instance_id}"
 
-        self.current_generation_failure_threshold = 2
+        self.current_generation_failure_threshold = 10
 
         self.agent_generater_partial: callable = agent_generater_partial
 
@@ -60,13 +77,14 @@ class LearningInstance:
             learning_instance_id=self.instance_id
         )
 
+    @with_run_time_logging
     def run_instance(self) -> None:
         """
         Run the Lenarning instance
         """
-        current_generation_number: int = 0
         new_parents: list[BrainInstance] = []
         current_alpha_brain: BrainInstance = None
+        fitness_threshold: float = self.current_fitness_threshold
 
         for current_generation_number in range(self.max_number_of_generations):
             new_generation_id: str = (
@@ -79,10 +97,6 @@ class LearningInstance:
                 generation_number=current_generation_number,
             )
 
-            fitness_average = self.get_generation_fitness_average(new_parents)
-            # 10% increase over previous generation
-            new_fitness_threshold = fitness_average + (fitness_average / 100) * 10
-
             agent_generator: object = self.agent_generater_partial(
                 parents=new_parents,
                 max_generation_size=self.max_generation_size,
@@ -92,12 +106,24 @@ class LearningInstance:
 
             new_parents = self.run_generation(
                 agent_generator=agent_generator,
-                fitness_threshold=new_fitness_threshold,
+                fitness_threshold=fitness_threshold,
                 generation_db_ref=this_generation_db_ref,
                 generation_id=new_generation_id,
             )
 
-            if len(new_parents) <= self.current_generation_failure_threshold:
+            for brain in new_parents:
+                debug_logger.info(
+                    f"Generation number: {brain.current_generation_number} - ID : {brain.brain_id} - Fitness: {brain.fitness} Threshold: {fitness_threshold}"
+                )
+
+            debug_logger.info(
+                f"Generation Number: {current_generation_number} - Number of Fit brains: {len(new_parents)} "
+            )
+
+            if len(new_parents) < self.current_generation_failure_threshold:
+                debug_logger.info(
+                    f"BREAK - Did not reach minimum number of parents for threshold No parents {len(new_parents)} Threshold: {self.current_generation_failure_threshold}"
+                )
                 break
 
             potentail_alpha = new_parents[0]
@@ -108,12 +134,24 @@ class LearningInstance:
             if potentail_alpha.fitness > current_alpha_brain.fitness:
                 current_alpha_brain = potentail_alpha
 
+            fitness_threshold = self.generate_new_fitness_threshold(
+                parents=new_parents, generation_number=current_generation_number
+            )
+
         update_learning_instance_model_by_id(
             learning_instance_id=self.instance_id,
             new_alpha_brain=current_alpha_brain,
             total_generations=current_generation_number,
         )
 
+        debug_logger.info(
+            f"END OF INSTANCE - Generations created: {current_generation_number}"
+        )
+
+        debug_logger.info(f"Alpha_brain_fitness =  {current_alpha_brain.fitness}")
+
+    @with_run_time_logging
+    @with_brain_logging
     def run_generation(
         self,
         agent_generator: Generator,
@@ -162,7 +200,22 @@ class LearningInstance:
             generation_instance_id=generation_id, update_data=update_data
         )
 
-        return sorted_parents
+        return sorted_parents, all_brains
+
+    @with_fitness_threshold_logging
+    def generate_new_fitness_threshold(
+        self, parents: list[BrainInstance], generation_number: int
+    ) -> float:
+        """
+        Generate a new fitness threshold based on the average fitness of the previous generation plus a percentage
+        var: parents - List of brain inatnces from previous generation
+        var: generation_number - The current generation
+        rtn: new_fitness_threshold - average of perents fitness  plus 10%
+        """
+
+        average_fitness: float = self.get_generation_fitness_average(parents=parents)
+
+        return average_fitness + (average_fitness / 100) * 10
 
     def get_generation_fitness_average(self, parents: list[BrainInstance]) -> float:
         """

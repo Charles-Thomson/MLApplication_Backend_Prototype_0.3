@@ -6,7 +6,7 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_full_instance() -> None:
+def test_short_duration_instance() -> None:
     """
     Testing a full run of an instance
     """

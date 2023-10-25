@@ -13,7 +13,7 @@ DEFAULT_FORMAT = "%(levelname)s :: %(funcName)s :: %(message)s"
 def generate_logger(name: __name__, log_file: str, formatting: str = DEFAULT_FORMAT):
     """Generat a custom logger"""
     new_logger = logging.getLogger(name)
-    filename = "logging_files/logs/" + log_file
+    filename = "logs/debug_logs/" + log_file
     handler = logging.FileHandler(filename=filename, mode="w")
     formatter = logging.Formatter(formatting)
     handler.setFormatter(formatter)
