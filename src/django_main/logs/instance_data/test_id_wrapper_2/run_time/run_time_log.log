@@ -1,0 +1,2 @@
+INFO :: run_instance_function_pre_call :: test_wrapped_function called at - 07:04:20
+INFO :: post_call :: test_wrapped_function called at - 07:04:20

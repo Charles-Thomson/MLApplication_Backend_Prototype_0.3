@@ -5,6 +5,11 @@ import uuid
 
 from functools import partial
 
+from logging_files.test_folder_creation import (
+    with_logging_test_run_instance,
+    with_logging_test_run_generation,
+    with_logging_test_generate_new_fitness_threshold,
+)
 
 from logging_files.run_time_logging.function_call_time_logging import (
     with_run_time_logging,
@@ -58,9 +63,14 @@ class LearningInstance:
     """
 
     def __init__(
-        self, instance_id, agent_generater_partial: object, instance_config: dict
+        self,
+        instance_id,
+        agent_generater_partial: object,
+        instance_config: dict,
+        with_logging: bool,
     ):
-        self.instance_id: str = f"L:{instance_id}"
+        self.with_logging = with_logging
+        self.instance_id: str = f"L-{instance_id}"
 
         self.current_generation_failure_threshold = 10
 
@@ -77,8 +87,13 @@ class LearningInstance:
             learning_instance_id=self.instance_id
         )
 
-    @with_run_time_logging
-    def run_instance(self) -> None:
+    @with_logging_test_run_instance
+    def run_instance(
+        self,
+        with_logging: bool,
+        logging_root_file_path: str,
+        instance_id: str,
+    ) -> None:
         """
         Run the Lenarning instance
         """
@@ -110,6 +125,9 @@ class LearningInstance:
                 fitness_threshold=fitness_threshold,
                 generation_db_ref=this_generation_db_ref,
                 generation_id=new_generation_id,
+                with_logging=with_logging,
+                logging_root_file_path=logging_root_file_path,
+                instance_id=instance_id,
             )
 
             potential_new_alpha = alpha_brains_from_generation[0]
@@ -129,7 +147,11 @@ class LearningInstance:
             new_parents = alpha_brains_from_generation
 
             fitness_threshold = self.generate_new_fitness_threshold(
-                parents=new_parents, generation_number=current_generation_number
+                parents=new_parents,
+                generation_number=current_generation_number,
+                with_logging=with_logging,
+                logging_root_file_path=logging_root_file_path,
+                instance_id=instance_id,
             )
 
             for brain in alpha_brains_from_generation:
@@ -149,14 +171,16 @@ class LearningInstance:
 
         debug_logger.info(f"Alpha_brain_fitness =  {current_alpha_brain.fitness}")
 
-    @with_run_time_logging
-    @with_brain_logging
+    @with_logging_test_run_generation
     def run_generation(
         self,
         agent_generator: Generator,
         fitness_threshold: float,
         generation_db_ref: str,
         generation_id: str,
+        with_logging: bool,
+        logging_root_file_path: str,
+        instance_id: str,
     ) -> list[BrainInstance]:
         """
         Run a new generation
@@ -204,9 +228,14 @@ class LearningInstance:
 
         return generation_passed_viability, generation_alphas_brains, all_brains
 
-    @with_fitness_threshold_logging
+    @with_logging_test_generate_new_fitness_threshold
     def generate_new_fitness_threshold(
-        self, parents: list[BrainInstance], generation_number: int
+        self,
+        parents: list[BrainInstance],
+        generation_number: int,
+        with_logging: bool,
+        logging_root_file_path: str,
+        instance_id: str,
     ) -> float:
         """
         Generate a new fitness threshold based on the average fitness of the previous generation plus a percentage
@@ -256,12 +285,13 @@ def new_instance(config: json) -> LearningInstance:
         environment=environment,
     )
 
-    instance_id: str = generate_instance_id()
+    instance_id: str = "place_holder_instance_id"
 
     this_instance = LearningInstance(
         instance_id=instance_id,
         agent_generater_partial=agent_generater_partial,
         instance_config=instance_config_formatted,
+        with_logging=True,
     )
 
     return this_instance

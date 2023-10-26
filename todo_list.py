@@ -1,24 +1,21 @@
 # TODO Today:
 # Logging
-# DONE 1. Function logging
-# Logger to wrap the Learning instance- run_instance function
-# Logger to wrap the learning_instance - run_generation function
-# Both go to the same log file and show the start and end time of each learning_instance/ generation
+# all logging in one file
+# currently debugging
+# params are being passed in the wrong order
+# look into the ID system again as it's not great still
 
-# DONE 2. Function logging
-# Wapper for run_generation_instance
-# Logging all the brain instances
-# Logging all the fit brain instaces
+# finish bug testing then refactor down the logging
 
-# Done 3. Logging for fitness avergae
-# Want the generation number and average fitness in the log
+# 2. Stat refactoring down the instance_generation file
+# Look into the ID system all the way down - it,s not very descriptive of cohesive currently
 
-# 4. Write a test for a full - longer length run of the system
-# Setting of the alpha brain
-# If the threshold stops new generation, the alpha brain is of the old generation
-# Need a way to get the data from the generation even if it fails and be able to store it
 
-# 5. have the logs create a new folder to add logs to per run
+# 3. refactor down other files where possible
+
+# 4. move onto the views file
+# Work out the return data structure thats needed
+# write the functions to get the relervent data from th DB and fromat
 
 
 # Look into how to properly use the get.loger functions
