@@ -1,0 +1,13 @@
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-54 - Fitness: 3.75 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-92 - Fitness: 3.7499999999999996 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-31 - Fitness: 3.6 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-15 - Fitness: 3.5999999999999996 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-22 - Fitness: 3.5999999999999996 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-5 - Fitness: 3.45 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-53 - Fitness: 3.45 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-25 - Fitness: 3.4499999999999997 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-8 - Fitness: 3.3 Threshold: 3.8774999999999995
+INFO :: run_instance :: Generation number: 0 - ID : B-L-place_holder_instance_id-0-16 - Fitness: 3.3 Threshold: 3.8774999999999995
+INFO :: run_instance :: BREAK - The generation is not viable due to an inificent number of brains passing the fitness threshold
+INFO :: run_instance :: END OF INSTANCE - Generations created: 1
+INFO :: run_instance :: Alpha_brain_fitness =  6.449999999999999

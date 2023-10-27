@@ -4,6 +4,8 @@ have to set the DJANGO_SETTINGS_MODULE at the django_main level
 cmd -> 
 set DJANGO_SETTINGS_MODULE=django_main.settings 
 
+Define where the logging files come from 
+
 
 The config file passed into the main system is the following format 
 

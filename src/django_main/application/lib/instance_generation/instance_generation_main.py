@@ -5,26 +5,14 @@ import uuid
 
 from functools import partial
 
-from logging_files.test_folder_creation import (
+from logging_files.decorator_logging.decorators.run_instance_function_deco import (
     with_logging_test_run_instance,
+)
+from logging_files.decorator_logging.decorators.run_generation_function_deco import (
     with_logging_test_run_generation,
+)
+from logging_files.decorator_logging.decorators.generate_new_fitness_threshold_function_deco import (
     with_logging_test_generate_new_fitness_threshold,
-)
-
-from logging_files.run_time_logging.function_call_time_logging import (
-    with_run_time_logging,
-)
-
-from logging_files.logging_for_application.generation_function_logging import (
-    with_brain_logging,
-)
-
-from logging_files.logging_for_application.fitness_threshold_logging import (
-    with_fitness_threshold_logging,
-)
-
-from logging_files.logging_for_testing.logging_for_testing import (
-    debug_logger,
 )
 
 from application.lib.environment.environment_factory import (
@@ -120,13 +108,18 @@ class LearningInstance:
                 instance_id=self.instance_id,
             )
 
-            generation_viability, alpha_brains_from_generation, _ = self.run_generation(
+            (
+                generation_viability,
+                alpha_brains_from_generation,
+                all_brains,
+            ) = self.run_generation(
                 agent_generator=agent_generator,
                 fitness_threshold=fitness_threshold,
                 generation_db_ref=this_generation_db_ref,
+                generation_number=current_generation_number,
                 generation_id=new_generation_id,
-                with_logging=with_logging,
                 logging_root_file_path=logging_root_file_path,
+                with_logging=with_logging,
                 instance_id=instance_id,
             )
 
@@ -139,9 +132,6 @@ class LearningInstance:
                 current_alpha_brain = potential_new_alpha
 
             if generation_viability is False:
-                debug_logger.info(
-                    "BREAK - The generation is not viable due to an inificent number of brains passing the fitness threshold"
-                )
                 break
 
             new_parents = alpha_brains_from_generation
@@ -154,22 +144,11 @@ class LearningInstance:
                 instance_id=instance_id,
             )
 
-            for brain in alpha_brains_from_generation:
-                debug_logger.info(
-                    f"Generation number: {brain.current_generation_number} - ID : {brain.brain_id} - Fitness: {brain.fitness} Threshold: {fitness_threshold}"
-                )
-
         update_learning_instance_model_by_id(
             learning_instance_id=self.instance_id,
             new_alpha_brain=current_alpha_brain,
             total_generations=current_generation_number,
         )
-
-        debug_logger.info(
-            f"END OF INSTANCE - Generations created: {current_generation_number}"
-        )
-
-        debug_logger.info(f"Alpha_brain_fitness =  {current_alpha_brain.fitness}")
 
     @with_logging_test_run_generation
     def run_generation(
@@ -178,6 +157,7 @@ class LearningInstance:
         fitness_threshold: float,
         generation_db_ref: str,
         generation_id: str,
+        generation_number: int,
         with_logging: bool,
         logging_root_file_path: str,
         instance_id: str,

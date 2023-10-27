@@ -1,11 +1,9 @@
 # TODO Today:
-# Logging
-# all logging in one file
-# currently debugging
-# params are being passed in the wrong order
-# look into the ID system again as it's not great still
+# Finish bug testings Logging
+# refactor down the logging process
+# can a ui element be added for when to save the logging files to ?
 
-# finish bug testing then refactor down the logging
+# Add the debug logger into the logging files
 
 # 2. Stat refactoring down the instance_generation file
 # Look into the ID system all the way down - it,s not very descriptive of cohesive currently
