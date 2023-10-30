@@ -13,7 +13,7 @@ from logging_files.decorator_logging.directory_generation import (
 )
 
 
-def run_instance_function_pre_call(func, *args, **kwargs) -> None:
+def run_instance_pre_call_function(func, *args, **kwargs) -> None:
     """
     Pre call function in for the run_instance wrapper
     This will set up the logging if needed
@@ -35,7 +35,7 @@ def run_instance_function_pre_call(func, *args, **kwargs) -> None:
         return logging_root_file_path
 
 
-def post_call(func, instance_id):
+def run_instance_post_call_function(func, instance_id):
     run_time_logger = logging.getLogger(instance_id + "run_time_logger")
 
     time = datetime.now().time().strftime("%H:%M:%S")
@@ -71,5 +71,6 @@ def run_instance_function_wrapper(
 
 
 with_logging_test_run_instance = run_instance_function_wrapper(
-    pre_run_function=run_instance_function_pre_call, post_run_function=post_call
+    pre_run_function=run_instance_pre_call_function,
+    post_run_function=run_instance_post_call_function,
 )

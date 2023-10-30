@@ -41,6 +41,7 @@ class GenerationInstanceModelTests(TestCase):
             generation_instance_id=generation_instance_id_1,
             generation_number=current_generation_number_1,
             learning_instance_referance=self.learning_instance_db_referance,
+            parents_of_generation=[],
         )
 
         update_test_data: dict = {
@@ -77,12 +78,14 @@ class GenerationInstanceModelTests(TestCase):
             generation_instance_id=generation_instance_id_1,
             generation_number=current_generation_number_1,
             learning_instance_referance=self.learning_instance_db_referance,
+            parents_of_generation=[],
         )
 
         test_generation_model_ref_2: json = new_generation_instance_model(
             generation_instance_id=generation_instance_id_2,
             generation_number=current_generation_number_2,
             learning_instance_referance=self.learning_instance_db_referance,
+            parents_of_generation=[],
         )
 
         update_test_data: dict = {

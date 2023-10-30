@@ -31,19 +31,24 @@ def fitness_threshold_function_wrapper(
         """Decorator"""
 
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(
+            *args,
+            logging_root_file_path,
+            instance_id,
+            with_logging,
+            generation_number,
+            **kwargs,
+        ):
             pre_run_function()
             new_fitness_threshold = func(*args, **kwargs)
 
-            if kwargs["with_logging"]:
-                new_fitness_threshold_logger(
-                    kwargs["logging_root_file_path"], kwargs["instance_id"]
-                )
+            if with_logging:
+                new_fitness_threshold_logger(logging_root_file_path, instance_id)
                 fitness_threshold_logger = logging.getLogger(
-                    kwargs["instance_id"] + "fitness_threshold_logger"
+                    instance_id + "fitness_threshold_logger"
                 )
                 fitness_threshold_logger.info(
-                    f"Generation Number: {kwargs['generation_number']} - Fitness Threshold: {new_fitness_threshold}"
+                    f"Generation Number: {generation_number} - Fitness Threshold: {new_fitness_threshold}"
                 )
             post_run_function()
 

@@ -63,6 +63,7 @@ class BrainInstanceModelTestCase(TestCase):
             generation_instance_id=self.generation_instance_id,
             generation_number=current_generation_number,
             learning_instance_referance=self.learning_instance_db_referance,
+            parents_of_generation=[],
         )
 
         update_test_data: dict = {

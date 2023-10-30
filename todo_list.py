@@ -1,7 +1,24 @@
 # TODO Today:
-# Finish bug testings Logging
-# refactor down the logging process
-# can a ui element be added for when to save the logging files to ?
+
+# DONE 1. Look at refacoting down the loging decorators
+# can create the deocs at the run_instance deco, return a generator for each that can then be passed to the next deco ?
+# Finally worked this out with **kwargs !!
+
+
+# 1.1 Fix tests from refactoring
+
+# 2. Refactoring down the Instance_generation file
+# - Move the instance into a new folder ?
+# - move data config to it's own folder ?
+
+# 3. Look at Azure DB options to intergrate
+
+
+# The logging decos need to be refactored down
+# see if all the additional var passing can be reduced ?
+
+
+# Look at GQL layer over API ?
 
 # Add the debug logger into the logging files
 

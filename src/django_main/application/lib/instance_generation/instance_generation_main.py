@@ -9,7 +9,7 @@ from logging_files.decorator_logging.decorators.run_instance_function_deco impor
     with_logging_test_run_instance,
 )
 from logging_files.decorator_logging.decorators.run_generation_function_deco import (
-    with_logging_test_run_generation,
+    with_generation_data_logging,
 )
 from logging_files.decorator_logging.decorators.generate_new_fitness_threshold_function_deco import (
     with_logging_test_generate_new_fitness_threshold,
@@ -108,20 +108,22 @@ class LearningInstance:
                 instance_id=self.instance_id,
             )
 
+            kwargs = dict(
+                agent_generator=agent_generator,
+                fitness_threshold=fitness_threshold,
+                generation_db_ref=this_generation_db_ref,
+                generation_id=new_generation_id,
+                logging_root_file_path=logging_root_file_path,
+                instance_id=self.instance_id,
+                generation_number=current_generation_number,
+                with_logging=self.with_logging,
+            )
+
             (
                 generation_viability,
                 alpha_brains_from_generation,
                 all_brains,
-            ) = self.run_generation(
-                agent_generator=agent_generator,
-                fitness_threshold=fitness_threshold,
-                generation_db_ref=this_generation_db_ref,
-                generation_number=current_generation_number,
-                generation_id=new_generation_id,
-                logging_root_file_path=logging_root_file_path,
-                with_logging=with_logging,
-                instance_id=instance_id,
-            )
+            ) = self.run_generation(**kwargs)
 
             potential_new_alpha = alpha_brains_from_generation[0]
 
@@ -136,13 +138,15 @@ class LearningInstance:
 
             new_parents = alpha_brains_from_generation
 
-            fitness_threshold = self.generate_new_fitness_threshold(
+            kwargs = dict(
                 parents=new_parents,
                 generation_number=current_generation_number,
-                with_logging=with_logging,
+                with_logging=self.with_logging,
                 logging_root_file_path=logging_root_file_path,
-                instance_id=instance_id,
+                instance_id=self.instance_id,
             )
+
+            fitness_threshold = self.generate_new_fitness_threshold(**kwargs)
 
         update_learning_instance_model_by_id(
             learning_instance_id=self.instance_id,
@@ -150,17 +154,14 @@ class LearningInstance:
             total_generations=current_generation_number,
         )
 
-    @with_logging_test_run_generation
+    @with_generation_data_logging
     def run_generation(
         self,
         agent_generator: Generator,
         fitness_threshold: float,
         generation_db_ref: str,
         generation_id: str,
-        generation_number: int,
-        with_logging: bool,
-        logging_root_file_path: str,
-        instance_id: str,
+        **kwargs,
     ) -> list[BrainInstance]:
         """
         Run a new generation
@@ -212,10 +213,7 @@ class LearningInstance:
     def generate_new_fitness_threshold(
         self,
         parents: list[BrainInstance],
-        generation_number: int,
-        with_logging: bool,
-        logging_root_file_path: str,
-        instance_id: str,
+        **kwargs,
     ) -> float:
         """
         Generate a new fitness threshold based on the average fitness of the previous generation plus a percentage

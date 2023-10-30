@@ -2,6 +2,7 @@ Running tests should be done from within the Django_main package
 
 have to set the DJANGO_SETTINGS_MODULE at the django_main level
 cmd -> 
+ -> make sure no space at the end !!
 set DJANGO_SETTINGS_MODULE=django_main.settings 
 
 Define where the logging files come from 
