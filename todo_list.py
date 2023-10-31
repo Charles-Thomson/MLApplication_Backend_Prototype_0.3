@@ -3,13 +3,18 @@
 # Pre lunch
 # DONE 1. refactor down the decorator creation to a single file
 
-# 2. Move into postgradeSQL database
+# DONE 2. Move into postgradeSQL database
 # - Update any tests if needed
+
+# Moving onto working on the web side of Django cont after lunch
 
 # After lunch
 
+
 # 0. filling out the views files
-# - this will lead into the html templates and SVG elements
+# - complete the functions to save a BrainInstanceModel, generationM0del, LearningInstanceModel
+# This will mainly be done using the internal functions ?
+# Move onto the views function for a full run and the getting of data from the db
 
 # 1. Look at the data plotting from version_0.2 ?
 # Implement if simple
