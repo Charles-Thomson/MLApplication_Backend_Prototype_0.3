@@ -5,14 +5,10 @@ import uuid
 
 from functools import partial
 
-from logging_files.decorator_logging.decorators.run_instance_function_deco import (
-    with_logging_test_run_instance,
-)
-from logging_files.decorator_logging.decorators.run_generation_function_deco import (
-    with_generation_data_logging,
-)
-from logging_files.decorator_logging.decorators.generate_new_fitness_threshold_function_deco import (
-    with_logging_test_generate_new_fitness_threshold,
+from logging_files.decorator_logging.decorators.logging_decorators import (
+    run_instance_with_logging,
+    run_generation_with_logging,
+    generate_fitness_threshold_with_logging,
 )
 
 from application.lib.environment.environment_factory import (
@@ -75,13 +71,8 @@ class LearningInstance:
             learning_instance_id=self.instance_id
         )
 
-    @with_logging_test_run_instance
-    def run_instance(
-        self,
-        with_logging: bool,
-        logging_root_file_path: str,
-        instance_id: str,
-    ) -> None:
+    @run_instance_with_logging
+    def run_instance(self, logging_root_file_path=None, **kwargs) -> None:
         """
         Run the Lenarning instance
         """
@@ -154,7 +145,7 @@ class LearningInstance:
             total_generations=current_generation_number,
         )
 
-    @with_generation_data_logging
+    @run_generation_with_logging
     def run_generation(
         self,
         agent_generator: Generator,
@@ -209,7 +200,7 @@ class LearningInstance:
 
         return generation_passed_viability, generation_alphas_brains, all_brains
 
-    @with_logging_test_generate_new_fitness_threshold
+    @generate_fitness_threshold_with_logging
     def generate_new_fitness_threshold(
         self,
         parents: list[BrainInstance],
