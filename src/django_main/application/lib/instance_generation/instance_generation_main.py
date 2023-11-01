@@ -11,6 +11,10 @@ from logging_files.decorator_logging.decorators.logging_decorators import (
     generate_fitness_threshold_with_logging,
 )
 
+from application.lib.config_generation.generate_config_data import (
+    generate_instance_configuration_data,
+)
+
 from application.lib.environment.environment_factory import (
     EnvironmentFactory,
 )
@@ -48,22 +52,26 @@ class LearningInstance:
 
     def __init__(
         self,
-        instance_id,
+        instance_id: str,
         agent_generater_partial: object,
-        instance_config: dict,
+        hyper_perameters: dict,
         with_logging: bool,
     ):
+        self.instance_id = instance_id
         self.with_logging = with_logging
-        self.instance_id: str = f"L-{instance_id}"
 
-        self.current_generation_failure_threshold = 10
+        self.current_generation_failure_threshold = hyper_perameters[
+            "generation_failure_threshold"
+        ]
 
         self.agent_generater_partial: callable = agent_generater_partial
 
-        self.max_generation_size: int = instance_config["max_generation_size"]
-        self.current_fitness_threshold: float = instance_config["fitness_threshold"]
-        self.new_generation_threshold: int = instance_config["new_generation_threshold"]
-        self.max_number_of_generations: int = instance_config[
+        self.max_generation_size: int = hyper_perameters["max_generation_size"]
+        self.current_fitness_threshold: float = hyper_perameters["fitness_threshold"]
+        self.new_generation_threshold: int = hyper_perameters[
+            "new_generation_threshold"
+        ]
+        self.max_number_of_generations: int = hyper_perameters[
             "max_number_of_genrations"
         ]
 
@@ -81,15 +89,13 @@ class LearningInstance:
         fitness_threshold: float = self.current_fitness_threshold
 
         for current_generation_number in range(self.max_number_of_generations):
-            new_generation_id: str = (
-                f"L:{self.learning_instance_db_ref}-G:{current_generation_number}"
-            )
+            new_generation_id: str = f"{self.instance_id}-{current_generation_number}"
 
             this_generation_db_ref = new_generation_instance_model(
                 generation_instance_id=new_generation_id,
                 learning_instance_referance=self.learning_instance_db_ref,
                 generation_number=current_generation_number,
-                parents_of_generation=new_parents,  # Need to add in on other side
+                parents_of_generation=new_parents,
             )
 
             agent_generator: object = self.agent_generater_partial(
@@ -180,8 +186,11 @@ class LearningInstance:
                     generation_alphas_brains, key=lambda x: x.fitness, reverse=True
                 )
                 generation_passed_viability = True
+
                 return generation_passed_viability, generation_alphas_brains, all_brains
 
+        # needa guard here for index out of bounds ?
+        # If fails take 10 best brains
         generation_alphas_brains = sorted(
             all_brains, key=lambda x: x.fitness, reverse=True
         )[:10]
@@ -231,43 +240,33 @@ class LearningInstance:
         return sum(instance.fitness for instance in parents) / len(parents)
 
 
-def new_instance(config: json) -> LearningInstance:
+def new_instance(input_config: json) -> LearningInstance:
     """Generate a new instance based on the given config settings
     var: config - the given config settings as json
     rtn: Callable object
     """
 
-    env_config: dict = format_env_config(config["env_config"])
-
-    brain_config_formatted: dict = format_brain_config(config["brain_config"])
-
-    instance_config_formatted: dict = format_instance_config(config["instance_config"])
+    formatted_config: dict = generate_instance_configuration_data(
+        input_config=input_config
+    )
 
     environment: object = EnvironmentFactory.make_env(
-        env_type=config["env_type"], config=env_config
+        env_type=formatted_config["env_type"],
+        env_config=formatted_config["env_config"],
     )
 
     agent_generater_partial: callable = partial(
         new_agent_generator,
-        brain_config=brain_config_formatted,
-        agent_type=config["agent_type"],
+        brain_config=formatted_config["brain_config"],
+        agent_type=formatted_config["agent_type"],
         environment=environment,
     )
 
-    instance_id: str = "place_holder_instance_id"
-
     this_instance = LearningInstance(
-        instance_id=instance_id,
+        instance_id=formatted_config["instance_id"],
         agent_generater_partial=agent_generater_partial,
-        instance_config=instance_config_formatted,
+        hyper_perameters=formatted_config["hyper_perameters"],
         with_logging=True,
     )
 
     return this_instance
-
-
-def generate_instance_id() -> str:
-    """Generate a random brain_ID"""
-    brain_id = uuid.uuid4()
-    brain_id = str(brain_id)[:10]
-    return brain_id

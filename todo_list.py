@@ -1,20 +1,23 @@
 # TODO Today:
-
 # Pre lunch
-# DONE 1. refactor down the decorator creation to a single file
+# DONE 1. Refactor down the config cration and atrributes at a creation level
 
-# DONE 2. Move into postgradeSQL database
-# - Update any tests if needed
+# DONE - ish 1.5 ^^ will include the rework of the id system
 
-# Moving onto working on the web side of Django cont after lunch
+# DONE 2. Create a func to generate a input_config for the testing
+# - takes in instance_id then just a hard coded set of attributes
 
-# After lunch
+# DONE 3. Follow the use of the config through the system and make needed changes
 
+# Post lunch
 
-# 0. filling out the views files
-# - complete the functions to save a BrainInstanceModel, generationM0del, LearningInstanceModel
-# This will mainly be done using the internal functions ?
-# Move onto the views function for a full run and the getting of data from the db
+# 4. Fix effected tests from the refactoring
+
+# 5. Create a "main()" to est run the system using the postgrade external DB
+
+# 6. Create the return data package
+# This will move towards the API/GQL work
+
 
 # 1. Look at the data plotting from version_0.2 ?
 # Implement if simple

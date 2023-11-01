@@ -17,8 +17,11 @@ def new_agent_generator(
     instance_id: str,
     environment: object,
 ) -> Generator:
-    """Test"""
-    for instance_in_gen in range(max_generation_size):
+    """
+    Create a generator object
+
+    """
+    for instance_in_generation in range(max_generation_size):
         brain_config["current_generation_number"] = current_generation_number
 
         this_brain_type = "generational_weighted_brain"
@@ -26,13 +29,14 @@ def new_agent_generator(
         if current_generation_number == 0:
             this_brain_type = "random_weighted_brain"
 
-        brain_id: str = f"B-{instance_id}-{current_generation_number}-{instance_in_gen}"
+        brain_config["brain_type"] = this_brain_type
+
+        brain_config[
+            "brain_id"
+        ] = f"{instance_id}-{current_generation_number}-{instance_in_generation}"
 
         agent_brain: object = BrainFactory.make_brain(
-            brain_type=this_brain_type,
-            brain_config=brain_config,
-            parents=parents,
-            brain_id=brain_id,
+            brain_config=brain_config, parents=parents
         )
 
         new_env = deepcopy(environment)

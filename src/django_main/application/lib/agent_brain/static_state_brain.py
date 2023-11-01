@@ -1,5 +1,4 @@
 """Instance of a brain used by a agent"""
-import json
 import numpy as np
 
 

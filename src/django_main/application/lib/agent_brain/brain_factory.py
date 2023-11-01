@@ -2,9 +2,8 @@
 from __future__ import annotations
 from copy import deepcopy
 import random
-import uuid
 import numpy as np
-import json
+
 
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
@@ -24,26 +23,29 @@ from application.lib.neural_network.weight_huristics.weight_huristics_factory im
 
 # TODO: Refactor to allow easy access for converting db model to brain instance
 class BrainFactory:
-    """Factory for generations fo brains"""
+    """
+    Brain generation factory
+    rtn: retreval - the brain of the given type/ var brain_type
+    """
 
     brain_types = {}
 
     @classmethod
     def make_brain(
         cls,
-        brain_type,
         brain_config: dict,
-        brain_id: str,
         parents: list[BrainInstance] = None,
     ):
         """Generate the brain based of given type"""
+
+        brain_type = brain_config["brain_type"]
         try:
             retreval = cls.brain_types[brain_type]
 
         except KeyError as err:
             raise NotImplementedError(f"{brain_type} Not implemented") from err
 
-        return retreval(brain_config=brain_config, parents=parents, brain_id=brain_id)
+        return retreval(brain_config=brain_config, parents=parents)
 
     @classmethod
     def register(cls, type_name):
@@ -56,17 +58,8 @@ class BrainFactory:
         return deco
 
 
-def generate_brain_id() -> str:
-    """Generate a random brain_ID"""
-    brain_id = uuid.uuid4()
-    brain_id = str(brain_id)[:10]
-    return brain_id
-
-
 @BrainFactory.register("base_brain_instance")
-def base_brain_instance(
-    brain_config: dict, parents=None, brain_id=None
-) -> BrainInstance:
+def base_brain_instance(brain_config: dict, parents=None) -> BrainInstance:
     """
     Return a generic brain instance
     usage - Converting a models.Model back to a brain instance
@@ -81,7 +74,7 @@ def base_brain_instance(
 
 @BrainFactory.register("generational_weighted_brain")
 def new_generational_weighted_brain(
-    brain_config: dict, parents: list[BrainInstance], brain_id: str
+    brain_config: dict, parents: list[BrainInstance]
 ) -> BrainInstance:
     """Generate a new generationally weighted brain"""
 
@@ -118,8 +111,6 @@ def new_generational_weighted_brain(
     brain_config["weights"]["hidden_weights"] = new_input_to_hidden_weight
     brain_config["weights"]["output_weights"] = new_hidden_to_output_weights
 
-    brain_config["brain_id"] = brain_id
-
     return BrainInstance(
         brain_config=brain_config,
     )
@@ -149,9 +140,7 @@ def apply_mutation(weight_set: np.array) -> np.array:
 
 
 @BrainFactory.register("random_weighted_brain")
-def new_random_weighted_brain(
-    brain_config: dict, parents: list, brain_id: str
-) -> BrainInstance:
+def new_random_weighted_brain(brain_config: dict, parents: list) -> BrainInstance:
     """Generate a randomly weighted brain"""
 
     hidden_weights: np.array = initialize_weights(
@@ -166,8 +155,6 @@ def new_random_weighted_brain(
 
     brain_config["weights"]["hidden_weights"] = hidden_weights
     brain_config["weights"]["output_weights"] = output_weights
-
-    brain_config["brain_id"] = brain_id
 
     return BrainInstance(
         brain_config=brain_config,
