@@ -31,5 +31,3 @@ class LearningInsanceModelTests(TestCase):
         )
 
         learning_instance_data = get_learning_data_by_id(self.learning_instance_id)
-
-        print(f"Learning Instance data after update: {learning_instance_data} ")

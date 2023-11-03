@@ -23,7 +23,7 @@ class GenerationInstanceModelTests(TestCase):
     """Testing the saving of generation objects with the FK of a learning instance"""
 
     def setUp(self) -> None:
-        self.instance_id = "test_instance"
+        self.instance_id = "test_instance_id"
         self.learning_instance_db_referance = new_learning_instance_model(
             self.instance_id
         )
@@ -33,9 +33,7 @@ class GenerationInstanceModelTests(TestCase):
         test the creation of a generation instance model
         """
         current_generation_number_1 = 1
-        generation_instance_id_1 = (
-            f"L:{self.instance_id}-G:{current_generation_number_1}"
-        )
+        generation_instance_id_1 = f"{self.instance_id}-{current_generation_number_1}"
 
         test_generation_model_ref: json = new_generation_instance_model(
             generation_instance_id=generation_instance_id_1,
@@ -64,26 +62,20 @@ class GenerationInstanceModelTests(TestCase):
     def test_multiple_generation_model_retrival_with_fk(self) -> None:
         """Test saving and returning two gneration_instance using the FK - aka learning instance ref"""
 
-        current_generation_number_1 = 1
-        generation_instance_id_1 = (
-            f"L:{self.instance_id}-G:{current_generation_number_1}"
-        )
+        generation_instance_id_1 = f"{self.instance_id}-{1}"
 
-        current_generation_number_2 = 2
-        generation_instance_id_2 = (
-            f"L:{self.instance_id}-G:{current_generation_number_2}"
-        )
+        generation_instance_id_2 = f"{self.instance_id}-{2}"
 
         test_generation_model_ref_1: json = new_generation_instance_model(
             generation_instance_id=generation_instance_id_1,
-            generation_number=current_generation_number_1,
+            generation_number=1,
             learning_instance_referance=self.learning_instance_db_referance,
             parents_of_generation=[],
         )
 
         test_generation_model_ref_2: json = new_generation_instance_model(
             generation_instance_id=generation_instance_id_2,
-            generation_number=current_generation_number_2,
+            generation_number=2,
             learning_instance_referance=self.learning_instance_db_referance,
             parents_of_generation=[],
         )

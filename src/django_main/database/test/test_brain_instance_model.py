@@ -3,6 +3,13 @@ import json
 from django.test import TestCase
 import numpy as np
 
+from application.lib.config_generation.generate_config_data import (
+    generate_instance_configuration_data,
+)
+from application.lib.config_generation.config_file_structure import (
+    generate_test_input_config_as_json,
+)
+
 from database.internal_use_db_functions.brain_instance_functions import (
     save_brain_instance,
     get_brain_instance_by_id,
@@ -55,9 +62,7 @@ class BrainInstanceModelTestCase(TestCase):
         )
 
         current_generation_number: int = 1
-        self.generation_instance_id = (
-            f"L{self.instance_id}-G{current_generation_number}"
-        )
+        self.generation_instance_id = f"{self.instance_id}-{current_generation_number}"
 
         self.test_generation_model_db_ref: json = new_generation_instance_model(
             generation_instance_id=self.generation_instance_id,
@@ -79,39 +84,44 @@ class BrainInstanceModelTestCase(TestCase):
             update_data=update_test_data,
         )
 
-        test_brain_config: dict = {
-            "weight_init_huristic": "he_weight",
-            "hidden_activation_func": "linear_activation_function",
-            "output_activation_func": "argmax_activation",
-            "new_generation_func": "crossover_weights_average",
-            "input_to_hidden_connections": "[24,9]",
-            "hidden_to_output_connections": "[9,9]",
-        }
+    def generate_brain_helper(self, instance_id: str, brain_id: int) -> BrainInstance:
+        """Helper function for generating brain instances"""
 
-        self.foramtted_test_config: dict = format_brain_config(
-            brain_config=test_brain_config
+        input_config_json: json = generate_test_input_config_as_json(
+            test_instance_id=instance_id
         )
-        self.test_brain_type: str = "random_weighted_brain"
-        self.brain_id = f"L:{self.instance_id}-G:{self.generation_instance_id}-B:1"
+        test_insance_config_data: dict = generate_instance_configuration_data(
+            input_config=input_config_json
+        )
 
-        self.test_brain = BrainFactory.make_brain(
-            brain_id=self.brain_id,
-            brain_type=self.test_brain_type,
-            brain_config=self.foramtted_test_config,
+        brain_data: dict = test_insance_config_data["brain_config"]
+        brain_data["brain_id"] = brain_id
+        brain_data["brain_type"] = "random_weighted_brain"
+
+        test_brain_instance: BrainInstance = BrainFactory.make_brain(
+            brain_config=brain_data,
         )
+
+        return test_brain_instance
 
     def test_brain_model_creation_and_retrival(self) -> None:
         """
         Test the creation, updating and retrival of a BrainInstanceModel
         """
 
+        test_brain_instance_id = f"{self.instance_id}-{self.generation_instance_id}-0"
+
+        test_brain_instance_1 = self.generate_brain_helper(
+            instance_id=self.instance_id, brain_id=test_brain_instance_id
+        )
+
         save_brain_instance(
-            brain_instance=self.test_brain,
+            brain_instance=test_brain_instance_1,
             generation_instance_db_ref=self.test_generation_model_db_ref,
         )
 
         returned_brain_instance: BrainInstance = get_brain_instance_by_id(
-            brain_id=self.brain_id
+            brain_id=test_brain_instance_id
         )
 
         self.assertIsInstance(returned_brain_instance, BrainInstance)
@@ -127,25 +137,27 @@ class BrainInstanceModelTestCase(TestCase):
         Save two brain instances and recover bot from the database useing the fk attribute
         """
 
-        test_brain_instance_1 = BrainFactory.make_brain(
-            brain_id=f"L:{self.instance_id}-G:{self.generation_instance_id}-B:1",
-            brain_type=self.test_brain_type,
-            brain_config=self.foramtted_test_config,
+        test_brain_instance_1_id: str = (
+            f"{self.instance_id}-{self.generation_instance_id}-1"
+        )
+        test_brain_1: BrainInstance = self.generate_brain_helper(
+            instance_id=self.instance_id, brain_id=test_brain_instance_1_id
         )
 
-        test_brain_instance_2 = BrainFactory.make_brain(
-            brain_id=f"L:{self.instance_id}-G:{self.generation_instance_id}-B:2",
-            brain_type=self.test_brain_type,
-            brain_config=self.foramtted_test_config,
+        test_brain_instance_2_id: str = (
+            f"{self.instance_id}-{self.generation_instance_id}-2"
+        )
+        test_brain_2: BrainInstance = self.generate_brain_helper(
+            instance_id=self.instance_id, brain_id=test_brain_instance_2_id
         )
 
         save_brain_instance(
-            brain_instance=test_brain_instance_1,
+            brain_instance=test_brain_1,
             generation_instance_db_ref=self.test_generation_model_db_ref,
         )
 
         save_brain_instance(
-            brain_instance=test_brain_instance_2,
+            brain_instance=test_brain_2,
             generation_instance_db_ref=self.test_generation_model_db_ref,
         )
 

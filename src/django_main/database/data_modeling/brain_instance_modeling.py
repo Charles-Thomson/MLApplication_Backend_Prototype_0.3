@@ -62,8 +62,6 @@ def brain_model_to_instance(brain_model) -> BrainInstance:
     brain_config["fitness_by_step"] = json.loads(brain_config["fitness_by_step"])
 
     new_brain_instance: BrainInstance = BrainFactory.make_brain(
-        brain_id=brain_config["brain_id"],
-        brain_type=brain_config["brain_type"],
         brain_config=brain_config,
     )
 

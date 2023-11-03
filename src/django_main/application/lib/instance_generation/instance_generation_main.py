@@ -252,7 +252,7 @@ def new_instance(input_config: json) -> LearningInstance:
 
     environment: object = EnvironmentFactory.make_env(
         env_type=formatted_config["env_type"],
-        env_config=formatted_config["env_config"],
+        map_data=formatted_config["map_data"],
     )
 
     agent_generater_partial: callable = partial(

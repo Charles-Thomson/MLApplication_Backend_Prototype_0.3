@@ -1,22 +1,11 @@
 # TODO Today:
 # Pre lunch
-# DONE 1. Refactor down the config cration and atrributes at a creation level
+# DONE 1. Fix the database modes tests
 
-# DONE - ish 1.5 ^^ will include the rework of the id system
-
-# DONE 2. Create a func to generate a input_config for the testing
-# - takes in instance_id then just a hard coded set of attributes
-
-# DONE 3. Follow the use of the config through the system and make needed changes
-
-# Post lunch
-
-# 4. Fix effected tests from the refactoring
-
-# 5. Create a "main()" to est run the system using the postgrade external DB
-
-# 6. Create the return data package
-# This will move towards the API/GQL work
+# 2. Start the process of forming the return package
+# 2.1 The get functions from the postgradeDB in views ?
+# 2.2 this will lead into the API creation - Define the incoming and outgoing package clearly
+# 2.3 Look into GQL over the normal API calling ?
 
 
 # 1. Look at the data plotting from version_0.2 ?

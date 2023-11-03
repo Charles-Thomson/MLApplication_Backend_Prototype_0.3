@@ -18,14 +18,14 @@ class EnvironmentFactory:
     envs = {}
 
     @classmethod
-    def make_env(cls, env_type: str, env_config: dict):
+    def make_env(cls, env_type: str, map_data: dict):
         """Make the env based on given type"""
         try:
             retreval = cls.envs[env_type]
         except KeyError as err:
             raise NotImplementedError(f"{env_type} is not implemented") from err
 
-        return retreval(env_config=env_config)
+        return retreval(map_data=map_data)
 
     @classmethod
     def register(cls, type_name):
@@ -42,14 +42,14 @@ class EnvironmentFactory:
 class StaticStateEnvironemnt(EnvironemntProtocol):
     """Environment that operates on set movements between static states"""
 
-    def __init__(self, env_config: dict):
-        self.environment_map: np.array = env_config["env_map"]
+    def __init__(self, map_data: dict):
+        self.environment_map: np.array = map_data["env_map"]
 
         dimension_x, dimension_y = self.environment_map.shape
 
-        self.max_step_count: int = hyper_perameters["max_step_count"]
+        self.max_step_count: int = map_data["max_step_count"]
 
-        self.start_coords: tuple[int, int] = env_config["start_location"]
+        self.start_coords: tuple[int, int] = map_data["start_location"]
 
         self.observation_function: callable = partial(
             static_state_observation, ncol=dimension_x
