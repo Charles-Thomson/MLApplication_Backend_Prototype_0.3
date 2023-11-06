@@ -1,5 +1,21 @@
 # TODO Today:
 
+# Next
+# The nested structure can(?) work for the passing of the JSON to the GQL but it
+# needs more testing with the higher nested json data
+
+# The next step will be to work out the issue with the passing of the full json, maybe set up a test so
+# it oesnt have to be copy and pasted inot the brozer client
+# i.e schema.execute
+
+# Make a return saying data processing
+
+# Next will be taking the data and passing to the full run
+# Then take the return data and structure
+# This will come down to the desired structure of the return package, i.e will it be sent as a while package or as selected in the app
+# Whole package seems to be a better option to start ?
+
+
 # Next with GQL
 # DONE 1. create a schema and resolver for getting a leraning instance
 # DONE 2. Test getting a learning instance by the learning instance id
@@ -16,6 +32,9 @@
 # 2. Running of the system base don the passed in input_config
 # 3. getting the return data from the run - will need the instance_id and and data re generations ?
 # 4. getting the most alpah brain from a run
+
+# 5. Clean up the resolvers and schemas
+# - split into sperate folders/ files ?
 
 
 # WORKING ON

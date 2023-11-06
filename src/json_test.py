@@ -2,22 +2,11 @@ import json
 import numpy as np
 from math import sqrt
 
-# test_dict = {"name": "jeff", "age": 22, "height": 2.2}
+test_string = '{"names": {"first": "jess", "second": "pls work"}}'
 
-# json_test_data = json.dumps(test_dict)
+as_dict = json.dumps(test_string)
 
-# rtn_data = json.loads(json_test_data)
+print(as_dict)
+print(type(as_dict))
 
-# print(rtn_data)
-# print(type(rtn_data["height"]))
-
-map_data: dict = {"env_map": "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1", "map_dimensions": 4}
-env_map_unshaped: np.array = np.fromstring(map_data["env_map"], dtype=int, sep=",")
-env_map_shaped: np.array = env_map_unshaped.reshape(map_data["map_dimensions"], -1)
-
-combined_with_shape = np.fromstring(map_data["env_map"], dtype=int, sep=",").reshape(
-    map_data["map_dimensions"], -1
-)
-
-print(env_map_unshaped)
-print(env_map_unshaped.shape)
+# inputJsonTest(jsonInput:"{\"env_type\":\"Static_State\",\"agent_type\": \"\",\"instance_id\": \"this_instance_id\", \"map_config\": {\"env_map\": \"1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1\",\"map_dimensions\": 4,\"start_location\": (1, 1),\"max_step_count\": 20,},\"hyper_perameters\": {\"max_number_of_genrations\": 2,\"max_generation_size\": 2,\"fitness_threshold\": 2.0,\"new_generation_threshold\": 2.0,\"generation_failure_threshold\": 10,},\"brain_config\": {\"weight_init_huristic\": \"he_weight\",\"hidden_activation_func\": \"linear_activation_function\",\"output_activation_func\": \"argmax_activation\",\"new_generation_func\": \"crossover_weights_average\",\"input_to_hidden_connections\": (24, 9),\"hidden_to_output_connections\":(9, 9),},}")

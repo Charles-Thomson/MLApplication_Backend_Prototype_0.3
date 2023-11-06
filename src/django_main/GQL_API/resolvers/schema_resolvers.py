@@ -1,6 +1,7 @@
+"""Resolvers for the GQL API requests"""
+import json
 import graphene
 from graphene_django import DjangoObjectType
-from .models import Restaurant
 
 from database.models import (
     BrainInstanceModel,
@@ -8,72 +9,19 @@ from database.models import (
     GenerationInstanceModel,
 )
 
-# class BrainInstanceModelType(DjangoObjectType):
-#     class Meta:
-#         model = BrainInstanceModel
-#         fields = ("brain_id")
+from GQL_API.schema.model_schema import (
+    LearningInstanceSchema,
+    GenerationInstanceSchema,
+    BrainInstanceSchema,
+)
 
-# class BrainInstanceQuery(graphene.ObjectType):
-#     """
-#     Quieries for the brain instance model
-#     """
-
-#     brains = graphene.List(BrainInstanceModelType)
-
-#     def resolve_restaurants(self, info, func=test, **kwargs):
-#         print(info)
-
-#         func()
-#         payload = Restaurant.objects.all()
-#         return payload
-
-
-# schema = graphene.Schema(query=BrainInstanceQuery)
-from graphene import ObjectType, String, Schema
-import json
-
-
-class LearningInstanceSchema(DjangoObjectType):
-    """
-    The schema for the learning instance model
-    """
-
-    class Meta:
-        model = LearningInstanceModel
-        fields = ("learning_instance_id", "alpha_brain", "number_of_generations")
-
-
-class GenerationInstanceSchema(DjangoObjectType):
-    """
-    The schema for the generation instance model
-    """
-
-    class Meta:
-        model = GenerationInstanceModel
-        fields = (
-            "generation_instance_id",
-            "generation_number",
-            "learning_instance_ref",
-        )
-
-
-class BrainInstanceSchema(DjangoObjectType):
-    """
-    The schema for the generation instance model
-    """
-
-    class Meta:
-        model = BrainInstanceModel
-        fields = (
-            "brain_id",
-            "current_generation_number",
-            "generation_instance_ref",
-        )
+from graphene import JSONString, String
+from graphene.types.generic import GenericScalar
 
 
 class Query(graphene.ObjectType):
     """
-    Query for the learning instance model
+    Query for the resolvers
     """
 
     learning_instance = graphene.List(LearningInstanceSchema)
@@ -85,6 +33,32 @@ class Query(graphene.ObjectType):
     brain_instance_by_fk = String(
         generation_instance_ref=String(default_value="default")
     )
+
+    input_config_json = String(input_config=String(default_value="no_data"))
+
+    input_json_test = GenericScalar(input_json=String(default_value="no_data"))
+
+    # inputJsonTest(jsonInput: "{\"name\": \"Jane\"}") working format
+    def resolve_input_json_test(self, info, input_json):
+        """
+        Testing the usage of json
+        """
+        print(input_json)
+        print(type(input_json))
+        as_dict = json.loads(input_json)
+        print(as_dict)
+        print(type(as_dict))
+
+        return input_json
+
+    def resolve_input_config_json(self, info, input_config: str):
+        """
+        Resolver for th input config
+        var: input_config - the input config in json format
+        """
+        print(input_config)
+        print(type(input_config))
+        return input_config
 
     # leraning instance ref "learning_ID_test"
     # generation ref "generation_ID_test"
@@ -118,8 +92,6 @@ class Query(graphene.ObjectType):
 
         return brain_objects
 
-    # to start test getting all the leanring insaces
-    # Teh move into getting by ID
     def resolve_learning_instance(self, info):
         """
         Resolver for the learning_instance path
@@ -140,36 +112,6 @@ class Query(graphene.ObjectType):
         """
         payload = BrainInstanceModel.objects.all()
         return payload
-
-
-# class RestaurantType(DjangoObjectType):
-#     class Meta:
-#         model = Restaurant
-#         fields = ("id", "name", "address")
-#         print("test")
-
-
-# class Query(graphene.ObjectType):
-#     """
-#     Queries for the Restaurant model
-#     """
-
-#     restaurants = graphene.List(RestaurantType)
-#     hello = String(first_name=String(default_value="default"))
-#     json_test = graphene.JSONString(
-#         name=String(default_value="default"),
-#         second_name=String(default_value="default"),
-#     )
-
-#     def resolve_hello(self, info, first_name: str):
-#         return first_name
-
-#     def resolve_json_test(self, info, name: str, second_name):
-#         return str(name), second_name
-
-#     def resolve_restaurants(self, info, **kwargs):
-#         payload = Restaurant.objects.all()
-#         return payload
 
 
 schema = graphene.Schema(query=Query)
