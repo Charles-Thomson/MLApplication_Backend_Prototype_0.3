@@ -43,40 +43,24 @@ class StaticStateEnvironemnt(EnvironemntProtocol):
     """Environment that operates on set movements between static states"""
 
     def __init__(self, map_data: dict):
-        self.environment_map: np.array = map_data["env_map"]
-
-        dimension_x, dimension_y = self.environment_map.shape
-
-        self.max_step_count: int = map_data["max_step_count"]
-
-        self.start_coords: tuple[int, int] = map_data["start_location"]
-
-        self.observation_function: callable = partial(
-            static_state_observation, ncol=dimension_x
-        )
-
-        self.current_coords: tuple[int, int] = self.start_coords
-
         self.current_step: int = 0
         self.path: list[tuple[int, int]] = []
 
+        self.environment_map: np.array = map_data["env_map"]
+        self.max_step_count: int = map_data["max_step_count"]
+        self.current_coords: tuple[int, int] = map_data["start_location"]
+
     def get_env_type(self) -> str:
-        """Return the type of the environement
-        rtn -> String: The type of the environement
+        """
+        Return the type of the environement
+        rtn: The type of the environement
         """
         return "Static_State"
 
     def get_environment_observation(self) -> np.array:
         """Get observation data from the environment"""
 
-        return self.observation_function(self.current_coords, self.environment_map)
-
-    def setup_call(self):
-        """A call for an agent to request the set up data from the env
-        - Currently only used to pass start location
-        """
-
-        return self.current_coords
+        return static_state_observation(self.current_coords, self.environment_map)
 
     def step(self, action: int) -> tuple[int, float, bool]:
         """Process the next step/movment in the environment
@@ -87,14 +71,14 @@ class StaticStateEnvironemnt(EnvironemntProtocol):
         reward: float = self.calculate_reward(self.current_coords)
         new_state_x, new_state_y = self.process_action(action)
         termination: bool = self.termination_check(new_state_x, new_state_y)
+
         self.path.append(self.current_coords)
 
-        new_coords = (new_state_x, new_state_y)
+        self.current_coords = (new_state_x, new_state_y)
 
-        self.current_coords = new_coords
         self.current_step += 1
 
-        return new_coords, termination, reward
+        return self.current_coords, termination, reward
 
     def remove_goal(self, current_state_x: int, current_state_y: int):
         """Remove goal location from maze once reached - sets to open i.e '1'"""
@@ -105,7 +89,7 @@ class StaticStateEnvironemnt(EnvironemntProtocol):
 
         current_state_x, current_state_y = current_coords
 
-        value_at_new_state = get_location_value(
+        value_at_new_state = self.get_location_value(
             self.environment_map, (current_state_x, current_state_y)
         )
 
@@ -130,7 +114,8 @@ class StaticStateEnvironemnt(EnvironemntProtocol):
             new_state_x < 0,
             new_state_y < 0,
             self.current_step >= self.max_step_count,
-            get_location_value(self.environment_map, (new_state_x, new_state_y)) == 2,
+            self.get_location_value(self.environment_map, (new_state_x, new_state_y))
+            == 2,
         ]
 
         if any(termination_conditions):
@@ -177,21 +162,10 @@ class StaticStateEnvironemnt(EnvironemntProtocol):
 
         return (hrow, hcol)
 
-
-def to_coords(ncol: int, state: int):
-    """Convert state value to map coords"""
-    return divmod(state, ncol)
-
-
-def to_state(ncol: int, coords: tuple[int, int]):
-    """Convert map coords to state value"""
-    return (coords[0] * ncol) + coords[1]
-
-
-def get_location_value(env_map: np.array, coords: tuple):
-    """Get the value of a location in the env"""
-    try:
-        value = env_map[coords[0]][coords[1]]
-        return value
-    except IndexError:
-        return 2  # Termination condition
+    def get_location_value(aelf, env_map: np.array, coords: tuple):
+        """Get the value of a location in the env"""
+        try:
+            value = env_map[coords[0]][coords[1]]
+            return value
+        except IndexError:
+            return 2  # Termination condition

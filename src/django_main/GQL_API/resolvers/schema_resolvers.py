@@ -1,7 +1,14 @@
 """Resolvers for the GQL API requests"""
 import json
 import graphene
-from graphene_django import DjangoObjectType
+from graphene import String
+from graphene.types.generic import GenericScalar
+
+from application.lib.config_generation.config_file_structure import (
+    generate_test_input_config_as_json,
+    generate_full_run_test_input_config_as_json,
+)
+from application.lib.instance_generation.instance_generation_main import new_instance
 
 from database.models import (
     BrainInstanceModel,
@@ -15,103 +22,118 @@ from GQL_API.schema.model_schema import (
     BrainInstanceSchema,
 )
 
-from graphene import JSONString, String
-from graphene.types.generic import GenericScalar
-
 
 class Query(graphene.ObjectType):
     """
-    Query for the resolvers
+    GQL Base Query
     """
 
-    learning_instance = graphene.List(LearningInstanceSchema)
-    generation_instance = graphene.List(GenerationInstanceSchema)
-    brain_instance = graphene.List(BrainInstanceSchema)
+    # for testing
+    dummy_run = String(dummy_id=String())
 
-    learning_instance_by_id = String(instance_id=String(default_value="default"))
-    generaiton_instance_by_fk = String(instance_id_ref=String(default_value="default"))
-    brain_instance_by_fk = String(
-        generation_instance_ref=String(default_value="default")
+    # New instance
+    new_instance = GenericScalar(input_config=String(default_value="no_config_given"))
+
+    # Get model by referance
+    get_learning_instance_by_id = String(
+        learning_instance_id=String(default_value="no_id_given")
+    )
+    get_generation_instance_by_learning_ref = String(
+        learning_instance_ref=String(default_value="no_ref_given")
+    )
+    get_brain_instances_by_generaition_ref = String(
+        generation_instance_ref=String(default_value="no_ref_given")
     )
 
-    input_config_json = String(input_config=String(default_value="no_data"))
+    # Get all model data by model
+    get_all_learning_instances = graphene.List(LearningInstanceSchema)
+    get_all_generation_instances = graphene.List(GenerationInstanceSchema)
+    get_all_brain_instances = graphene.List(BrainInstanceSchema)
 
-    input_json_test = GenericScalar(input_json=String(default_value="no_data"))
-
-    # inputJsonTest(jsonInput: "{\"name\": \"Jane\"}") working format
-    def resolve_input_json_test(self, info, input_json):
+    # For testing
+    def resolve_dummy_run(self, info, dummy_id: str):
         """
-        Testing the usage of json
+        Run the system with dummy json
         """
-        print(input_json)
-        print(type(input_json))
-        as_dict = json.loads(input_json)
-        print(as_dict)
-        print(type(as_dict))
-
-        return input_json
-
-    def resolve_input_config_json(self, info, input_config: str):
-        """
-        Resolver for th input config
-        var: input_config - the input config in json format
-        """
-        print(input_config)
-        print(type(input_config))
-        return input_config
-
-    # leraning instance ref "learning_ID_test"
-    # generation ref "generation_ID_test"
-    def resolve_learning_instance_by_id(self, info, instance_id: str):
-        """
-        Resolver for the learning_instance path
-        """
-        payload = LearningInstanceModel.objects.get(learning_instance_id=instance_id)
-
-        return payload
-
-    def resolve_generaiton_instance_by_fk(self, info, instance_id_ref: str):
-        """
-        Resolver for getting generation instances based on the learnin instance ref - fk
-        """
-        learning_instance_model = LearningInstanceModel.objects.get(
-            learning_instance_id=instance_id_ref
+        print("in dummy run resolver")
+        dummy_json_input = generate_full_run_test_input_config_as_json(
+            test_instance_id=dummy_id
         )
-        generation_objects = learning_instance_model.fk_ref.all()
 
-        return generation_objects
+        instance = new_instance(input_config=dummy_json_input)
 
-    def resolve_brain_instance_by_fk(self, info, generation_instance_ref: str):
+        print(instance.instance_id)
+
+        instance.run_instance()
+
+        return instance.instance_id
+
+    def resolve_new_instance(self, info, input_config: json):
         """
-        Resolver for getting brain instance by the generaiton instance referance - fk
+        Resolver - Generate and run a new leaning instance based on the input_config configuration
+        var: input_config - Configuration for the new insatnce
         """
+
+        instance = new_instance(input_config=input_config)
+
+        instance.run_instance()
+
+        return instance.instance_id + "complete"
+
+    def resolver_get_learning_instance_by_id(self, info, learning_instance_id: str):
+        """
+        Resolver - Get the learning instance with the given learning_instance_id
+        var: learning_instance_id - ID of a learning insatnce
+        """
+
+        return LearningInstanceModel.objects.get(
+            learning_instance_id=learning_instance_id
+        )
+
+    def resolve_get_generation_instance_by_learning_ref(
+        self, info, learning_instance_ref: str
+    ):
+        """
+        Resolver - get all generatio instances related to a given learning instance
+        var: learning_instance_ref - A learning instance referance
+        """
+
+        learning_instance_model = LearningInstanceModel.objects.get(
+            learning_instance_id=learning_instance_ref
+        )
+        return learning_instance_model.fk_ref.all()
+
+    def resolve_get_brain_instances_by_generaition_ref(
+        self, info, generation_instance_ref: str
+    ):
+        """
+        Resolver - get all brain instances related to a given generation
+        var: generation_instance_ref - A generation instance referance
+        """
+
         generation_instance_model = GenerationInstanceModel.objects.get(
             generation_instance_id=generation_instance_ref
         )
-        brain_objects = generation_instance_model.fk_ref.all()
 
-        return brain_objects
+        return generation_instance_model.fk_ref.all()
 
-    def resolve_learning_instance(self, info):
+    def resolve_get_all_learning_instance(self, info):
         """
-        Resolver for the learning_instance path
+        Resolver - get all learning instances
         """
-        payload = LearningInstanceModel.objects.all()
-        return payload
+        return LearningInstanceModel.objects.all()
 
-    def resolve_generation_instance(self, info):
+    def resolve_get_all_generation_instance(self, info):
         """
-        Resolver for the generation_instance path
+        Resolver - get all generation instances
         """
-        payload = GenerationInstanceModel.objects.all()
-        return payload
+        return GenerationInstanceModel.objects.all()
 
-    def resolve_brain_instance(self, info):
+    def resolve_get_all_brain_instance(self, info):
         """
-        Resolver for the brain_instance path
+        Resolver - get all brain instances
         """
-        payload = BrainInstanceModel.objects.all()
-        return payload
+        return BrainInstanceModel.objects.all()
 
 
 schema = graphene.Schema(query=Query)

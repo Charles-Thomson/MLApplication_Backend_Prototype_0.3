@@ -42,17 +42,12 @@ class GenerationInstanceModelTests(TestCase):
             parents_of_generation=[],
         )
 
-        update_test_data: dict = {
-            "average_fitness": 3.5,
-            "fitness_threshold": 4.0,
-            "generation_alpha_brain": "Brain_2",
-            "generation_size": 2,
-            "parents_of_generation": ["Brain_1", "brain_2"],
-        }
-
         update_generation_model_by_id(
             generation_instance_id=generation_instance_id_1,
-            update_data=update_test_data,
+            average_fitness=3.5,
+            fitness_threshold=4.0,
+            generation_alpha_brain="Brain_2",
+            generation_size=2,
         )
 
         returned_generation_data: dict = get_generation_data_with_id(
@@ -80,22 +75,20 @@ class GenerationInstanceModelTests(TestCase):
             parents_of_generation=[],
         )
 
-        update_test_data: dict = {
-            "average_fitness": 3.5,
-            "fitness_threshold": 4.0,
-            "generation_alpha_brain": "Brain_2",
-            "generation_size": 2,
-            "parents_of_generation": ["Brain_1", "brain_2"],
-        }
-
         update_generation_model_by_id(
             generation_instance_id=generation_instance_id_1,
-            update_data=update_test_data,
+            average_fitness=3.5,
+            fitness_threshold=4.0,
+            generation_alpha_brain="Brain_2",
+            generation_size=2,
         )
 
         update_generation_model_by_id(
             generation_instance_id=generation_instance_id_2,
-            update_data=update_test_data,
+            average_fitness=3.5,
+            fitness_threshold=4.0,
+            generation_alpha_brain="Brain_2",
+            generation_size=2,
         )
 
         learning_instance_model = get_learning_model_by_id(self.instance_id)

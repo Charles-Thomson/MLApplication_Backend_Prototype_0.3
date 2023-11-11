@@ -20,4 +20,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("database/", include("database.urls")),
     path("graphql/", include("GQL_API.urls")),
+    path("django_webpage/", include("django_webpage.urls")),
 ]

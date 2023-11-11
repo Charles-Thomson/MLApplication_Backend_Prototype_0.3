@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+        
+        /* Create two equal columns that floats next to each other */
+        .column {
+          float: left;
+          width: 50%;
+          padding: 10px;
+           /* Should be removed. Only for demonstration */
+        }
+
+        .internal_column{
+            float: left;
+            width: 50%;
+            /* padding: 10px; */
+
+        }
+
+        .my_container{
+            border: 2px solid black;
+            height: 300px;
+            flex: none;
+
+        }
+
+        .board{
+            display: grid;
+            grid-template-columns: repeat(8, 20); /*Number of cols - width of each col  */ 
+            position: absolute;
+            /* top: 20%; */
+            left: 50%;
+            
+            width: 160px;
+            height: 160px;
+            border: 2px solid black;
+        }
+
+        .custom_container{
+            display: flex;
+            height: 300px;
+            width: 200px;
+
+        }
+
+        .flex-container {
+
+                display: flex;  
+        }
+
+        .main-content {
+            flex: 1;  
+            }
+
+        .sidebar {
+            flex: 0 0 300px;
+            }
+
+        .section{
+            padding: 20px;
+            border-radius: 12px;
+
+        }      
+        /* Clear floats after the columns */
+        /* .row:after {
+          content: "";
+          display: table;
+          clear: both;
+        } */
+        </style>
+</head>
+
+<body>
+    <div style="max-width: 900;" class = "container">
+    <div    class="row">
+            <div style="margin-top: 50px;" class="column">
+
+            <h1 class="ui center aligned header">Fit Brain Instance Data</h1>
+
+            <!-- <form class="ui form" action="/addfit" method="post">
+                {% csrf_token %}
+                <div class="field">
+                    <label>Brain Instance id</label>
+                    <input type="text" name="brain_instance_id" placeholder="Enter Id..."><br>
+                </div>
+                <div class="field">
+                    <label>Brain Generation Number</label>
+                    <input type="text" name="generation_number" placeholder="Enter Generation Number..."><br>
+                </div>
+                <div class="field">
+                    <label>Brain hidden weights</label>
+                    <input type="text" name="hidden_weights" placeholder="Enter hidden weights..."><br>
+                </div>
+                <button class="ui blue button" type="submit">Add New Fit Brain</button>
+            </form> -->
+
+            <hr>
+
+            {% for BrainInstance in Fit_BrainInstance_list %}
+            <div class="ui segment">
+                <p class="ui big header">Fit Brain</p>
+                <p class="ui big header">{{ BrainInstance.id }}</p>
+                <p class="ui big header">{{ BrainInstance.brain_id }}</p>
+                <p class="ui big header">{{ BrainInstance.generation_num }}</p>
+                <a class="ui red button" href="/delete/{{ BrainInstance.id }}">Delete</a>
+                
+            </div>
+            {% endfor %}
+            </div>
+        
+
+        
+            <div style="margin-top: 50px;" class="column"">
+                <h1 class="ui center aligned header">Brain Instance Data</h1>
+
+                <hr>
+
+                {% for BrainInstance_a in All_BrainInstance_list %}
+                <div class="flex-container">
+                
+                    <section class="main-content">
+                    
+                        <p class="ui big header">General Brain</p>
+                        <p class="ui big header"> Generation Number: {{ BrainInstance_a.generation_num }}</p>
+                        <p class="ui big header"> Fitness: {{BrainInstance_a.fitness}} </p>
+                        <p class="ui big header">Insance ID: {{ BrainInstance_a.brain_id }}</p>
+                
+                    </section>
+
+                    <section class="sidebar" style="width: 200px;">
+
+                        <div class="ui container">
+                        <div class="board"></div>
+
+                        </section>
+                        
+                </div>
+                
+
+                    
+                    
+                </div>
+                {% endfor %}
+            </div>
+        
+
+    </div> <!-- End of Row -->
+    </div><!-- end of container-->>
+</body>
+
+</html>

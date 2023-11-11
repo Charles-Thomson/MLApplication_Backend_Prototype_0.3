@@ -103,22 +103,31 @@ def get_generation_model_with_id(
 
 
 def update_generation_model_by_id(
-    generation_instance_id: str, update_data: dict
+    generation_instance_id: str,
+    average_fitness: float,
+    fitness_threshold: float,
+    generation_alpha_brain: object,
+    generation_size: int,
 ) -> None:
     """
     Update a given generation instance - selected by the generation instances id
+    var: generation_instance_id - generation instance to be updated
+    var: average_fitness- average fitness from a genration
+    var: fitness_threshold - fitness threshold from a generation
+    var: generation_alpha_brain - the highest fitness brain of the generation
+    var: generation_size - the size of the genration(No* BrainInstances)
     """
 
     generation_instance: GenerationInstanceModel = GenerationInstanceModel.objects.get(
         generation_instance_id=generation_instance_id
     )
-    jsonpickle.encode(update_data["generation_alpha_brain"])
-    generation_instance.average_fitness = update_data["average_fitness"]
-    generation_instance.fitness_threshold = update_data["fitness_threshold"]
+
+    generation_instance.average_fitness = average_fitness
+    generation_instance.fitness_threshold = fitness_threshold
     generation_instance.generation_alpha_brain = jsonpickle.encode(
-        update_data["generation_alpha_brain"]
+        generation_alpha_brain
     )
-    generation_instance.generation_size = update_data["generation_size"]
+    generation_instance.generation_size = generation_size
 
     generation_instance.save(
         update_fields=[

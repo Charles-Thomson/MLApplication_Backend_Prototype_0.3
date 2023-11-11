@@ -80,7 +80,6 @@ def test_environment_multiple_steps(test_env: StaticStateEnvironemnt) -> None:
 
     test_environment: StaticStateEnvironemnt = test_env
 
-    assert test_environment.start_coords == [1, 1]
     assert test_environment.current_coords == [1, 1]
     assert test_environment.current_step == 0
 

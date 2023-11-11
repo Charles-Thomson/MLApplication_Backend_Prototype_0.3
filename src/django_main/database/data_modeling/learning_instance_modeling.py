@@ -14,7 +14,6 @@ def learning_instance_data_to_model(
     model = DatabaseModelsFactory.get_model(model_type="learning_instance_model")
 
     new_model: LearningInstanceModel = model(
-        id=0,
         learning_instance_id=learning_instance_data["learning_instance_id"],
         alpha_brain="{}",
         number_of_generations="0",

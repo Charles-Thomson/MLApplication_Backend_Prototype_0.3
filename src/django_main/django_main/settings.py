@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "django_webpage",
     "graphene_django",
     "GQL_API",
     "database.apps.DatabaseConfig",

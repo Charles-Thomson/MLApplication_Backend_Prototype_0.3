@@ -3,10 +3,13 @@ from itertools import chain
 import numpy as np
 
 
-def static_state_observation(
-    agent_coords: int, env_map: np.array, ncol: int
-) -> list[float]:
-    """The collection of observation data from a static state based env"""
+def static_state_observation(agent_coords: int, env_map: np.array) -> list[float]:
+    """
+    The collection of observation data from a static state based env
+    var: agent_coords - Coordiantes of the eganet in the env
+    rtn: observation_data - Data of distance to objects in env map
+    """
+
     loc_row, loc_col = agent_coords
 
     values_up_right: list = np.diagonal(env_map[loc_row::-1, loc_col:])[1:]
@@ -19,7 +22,7 @@ def static_state_observation(
     values_left: list = env_map[loc_row, loc_col - 1 :: -1]
     values_up: list = env_map[loc_row - 1 :: -1, loc_col]
 
-    # catch fo the 0 error for left and up
+    # catch for the 0 error for left and up
     if loc_col == 0:
         values_left: list = []
     if loc_row == 0:
@@ -42,10 +45,9 @@ def static_state_observation(
 
 
 def check_sight_line(sight_line: list) -> list[float, float, float]:
-    """Check along the given sightline and determin activation
-
-    Can not see past Goal or Obstical
-    case -> open states to the end of the map
+    """
+    Check along the given sightline and determin activation
+    - Can not see through Goal or Obstical
     """
     rtn_data = []
     for distance, value in enumerate(sight_line):
@@ -61,8 +63,3 @@ def check_sight_line(sight_line: list) -> list[float, float, float]:
         return [0.0, 0.0, 0.0]
 
     return rtn_data
-
-
-def to_coords(state: int, ncol: int) -> tuple:
-    """Convert state to coords"""
-    return divmod(state, ncol)

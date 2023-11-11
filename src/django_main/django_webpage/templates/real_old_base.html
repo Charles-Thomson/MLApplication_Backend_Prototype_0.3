@@ -1,0 +1,195 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <title>Data Vizualization</title>
+  <link rel="stylesheet"  href="{% static 'style.css' %}"/>
+  <style>
+    html {
+    box-sizing: border-box;
+    font-size: 100%;
+  }
+  
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  
+  body {
+    background-color: white;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  section, aside, div {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  
+  .blue {
+    background-color: blue;
+    
+  }
+  
+  .magenta {
+    background-color: magenta;
+    
+  }
+  
+  .green {
+    background-color: green;
+  }
+
+  .white{
+    background-color: white;
+  }
+
+  .text.black{
+    color: black;
+  }
+  
+  h1 { 
+    font-size: 4rem; 
+  }
+  
+  h2 { 
+    font-size: 3rem; 
+  }
+  
+  h1, h2, h3 {
+    margin-top: 0px;
+  }
+  
+  .flex-container {
+    
+    @media (min-width: 56.25em){
+      display: flex;  
+    }
+  }
+  
+  .main-content {
+    flex: 1;  
+  }
+  
+  .sidebar {
+    flex: 1 0 300px;
+  }
+
+  .internal_flex_data{
+    flex: 1;
+  }
+
+  .internal_flex_map{
+    flex: 0;
+  }
+
+  .board{
+            display: grid;
+            grid-template-columns: repeat(8, 20); /*Number of cols - width of each col  */ 
+            
+            width: 160px;
+            height: 160px;
+            border: 2px solid black;
+        }
+
+  </style>
+  
+</head>
+<body>
+
+  <main class="flex-container">
+
+    <section class="main-content blue">
+      <h2>All Brains</h2>
+      {% for BrainInstance in All_BrainInstance_list %}
+      <div class="ui segment white " style="margin-top: 20px;">
+          <div class="flex-container">
+
+              <section class="internal_flex_data">
+                  <p style="color: black; font-weight: bold;"  class="ui big header black ">General Brains</p>
+                  <p style="color: black;" class="ui big header black "> Brain ID: {{ BrainInstance.brain_id }}</p>
+                  <p style="color: black;" class="ui big header black ">Fitness: {{ BrainInstance.fitness }}</p>
+                  <p style="color: black;" class="ui big header black ">Generation: {{ BrainInstance.generation_num }}</p>
+                  <p style="color: black;" class="ui big header black ">SVG-Path: {{ BrainInstance.svg_path }}</p>
+                  <p style="color: black;" class="ui big header black ">SVG-Path-end: {{ BrainInstance.svg_end }}</p>
+                  <a style="color: black;" class="ui red button" href="/delete/{{ BrainInstance.id }}">Delete</a>
+              </section>
+
+              <section class="internal_flex_map">
+                        
+                
+                    
+                        <svg width="210px" height="210px" >
+                            <defs>
+                            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <rect width="20" height="20" style="fill:white; stroke:black; stroke-width:2; fill-opacity:0.1; stroke-opacity:0.9" />
+                            </pattern>
+                            </defs>
+
+                            <!-- The start point of the path marked as a circle-->>
+                            <circle cx={{ BrainInstance.svg_start.0 }} cy={{ BrainInstance.svg_start.1 }} r="5" stroke="black" stroke-width="3" fill="black" />
+
+                            <!-- The end point of the path marked by a cross -->>
+                            <line x1={{ BrainInstance.svg_end.0 }} y1={{ BrainInstance.svg_end.1 }} x2={{ BrainInstance.svg_end.2 }} y2={{ BrainInstance.svg_end.3 }} stroke="black" stroke-width="4" />
+                            <line x1={{ BrainInstance.svg_end.4 }} y1={{ BrainInstance.svg_end.5 }} x2={{ BrainInstance.svg_end.6 }} y2={{ BrainInstance.svg_end.7 }} stroke="black" stroke-width="4" />
+
+                                
+                            <!-- Draw the grid based on  pattern -->>
+                            <rect width="200px" height="200px" fill="url(#grid)" />
+                            
+                            <!-- the main path-->>
+                            <path d= {{BrainInstance.svg_path}} style="stroke: black; stroke-width: 4; fill-opacity: 0;">
+                              
+                                
+                              
+                            </svg>
+
+                
+
+                            
+                    
+
+                  
+              </section>
+          </div>
+          
+          
+      </div>
+      {% endfor %}
+    </section>
+
+    <aside class="sidebar blue" style="margin-left: 10px;">
+      <h2>Fit Brains</h2>
+      {% for BrainInstance in Fit_BrainInstance_list %}
+            <div class="ui segment white " style="margin-top: 20px;">
+                <div class="flex-container">
+                    
+                    <section class="internal_flex_data">
+                        <p style="color: black; font-weight: bold;"  class="ui big header black ">Fit Brain</p>
+                        <p style="color: black;" class="ui big header black "> Brain ID: {{ BrainInstance.brain_id }}</p>
+                        <p style="color: black;" class="ui big header black ">Fitness: {{ BrainInstance.fitness }}</p>
+                        <p style="color: black;" class="ui big header black ">Generation: {{ BrainInstance.generation_num }}</p>
+                        <a style="color: black;" class="ui red button" href="/delete/{{ BrainInstance.id }}">Delete</a>
+                    </section>
+                    <section class="internal_flex_map">
+                        <section class="board"></section>
+                    </section>
+                </div>
+                
+                
+            </div>
+            {% endfor %}
+
+
+
+    </aside>
+
+  </main>
+
+</body>
+</html>

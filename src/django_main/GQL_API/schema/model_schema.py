@@ -10,7 +10,7 @@ from database.models import (
 
 class LearningInstanceSchema(DjangoObjectType):
     """
-    The schema for the learning instance model
+    Base Learning instance model schema
     """
 
     class Meta:
@@ -20,7 +20,7 @@ class LearningInstanceSchema(DjangoObjectType):
 
 class GenerationInstanceSchema(DjangoObjectType):
     """
-    The schema for the generation instance model
+    Base Generation instance model schema
     """
 
     class Meta:
@@ -34,7 +34,7 @@ class GenerationInstanceSchema(DjangoObjectType):
 
 class BrainInstanceSchema(DjangoObjectType):
     """
-    The schema for the generation instance model
+    Base Brain instance model schema
     """
 
     class Meta:

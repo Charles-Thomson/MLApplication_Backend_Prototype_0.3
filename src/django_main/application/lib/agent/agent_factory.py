@@ -32,19 +32,12 @@ class StaticStateMazeAgent:
     """Static state maze agent"""
 
     def __init__(self, environment: object, agent_brain: object):
-        self.environment: object = environment
-        self.brain: object = agent_brain
-
-        self.path: list[int, int] = []
-        self.fitness_by_step: list[tuple] = []
         self.fitness: float = 0.0
         self.termination: bool = False
-        self.setup_check()
-
-    def setup_check(self) -> None:
-        """Call made to the environement to check the setup data"""
-        start_location = self.environment.setup_call()
-        self.path.append(start_location)
+        self.brain: object = agent_brain
+        self.environment: object = environment
+        self.fitness_by_step: list[tuple] = []
+        self.path: list[int, int] = [self.environment.current_coords]
 
     def run_agent(self) -> object:
         """Run the agent throught the environment"""
@@ -55,17 +48,13 @@ class StaticStateMazeAgent:
 
             new_coords, termination_status, reward = self.environment.step(action)
 
+            self.fitness += reward
             self.path.append(new_coords)
             self.termination = termination_status
-            self.fitness += reward
             self.fitness_by_step.append(self.fitness)
 
-        self.set_brain_data()
-
-        return self.brain
-
-    def set_brain_data(self) -> None:
-        """Update the brain data once termination is reached"""
         self.brain.fitness = self.fitness
         self.brain.traversed_path = self.path
         self.brain.fitness_by_step = self.fitness_by_step
+
+        return self.brain

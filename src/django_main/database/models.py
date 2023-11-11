@@ -32,7 +32,7 @@ class DatabaseModelsFactory:
 @DatabaseModelsFactory.register("learning_instance_model")
 class LearningInstanceModel(models.Model):
     """
-    A model to store the data from a learning instace
+    Django Model - LearningInstanceModel
     """
 
     learning_instance_id = models.CharField(max_length=350)
@@ -46,9 +46,7 @@ class LearningInstanceModel(models.Model):
 @DatabaseModelsFactory.register("generation_instance_model")
 class GenerationInstanceModel(models.Model):
     """
-    A model to store a full generation of BrainInstances
-    In the current version this strones a set of parents - i.e the "fit" instances
-    from a previous generation
+    Django Model - GenerationInstanceModel
     """
 
     generation_instance_id = models.CharField(max_length=350)
@@ -71,7 +69,9 @@ class GenerationInstanceModel(models.Model):
 
 @DatabaseModelsFactory.register("brain_instance_model")
 class BrainInstanceModel(models.Model):
-    """Model for the Brain Instances"""
+    """
+    Django Model - BrainInstanceModel
+    """
 
     brain_type = models.CharField(max_length=100, default="trained")
     brain_id = models.CharField(max_length=350)
@@ -82,6 +82,11 @@ class BrainInstanceModel(models.Model):
     weights = models.JSONField(default=dict)
     functions_callable = models.JSONField(default=dict)
 
+    # SVG drawing
+    # svg_path = models.CharField(max_length=350, default=1,1)
+    # svg_start = models.CharField(max_length=350, default="")
+    # svg_end = models.CharField(max_length=350, default="")
+
     generation_instance_ref = models.ForeignKey(
         GenerationInstanceModel,
         on_delete=models.CASCADE,
@@ -91,7 +96,3 @@ class BrainInstanceModel(models.Model):
 
     def __str__(self):
         return f"Brain ID: {self.brain_id} - Generation Number: {self.current_generation_number}"
-
-    # svg_path = models.CharField(max_length=350, default="")
-    # svg_start = models.CharField(max_length=350, default="")
-    # svg_end = models.CharField(max_length=350, default="")

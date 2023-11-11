@@ -22,7 +22,8 @@ from application.lib.neural_network.weight_huristics.weight_huristics_factory im
 def generate_instance_configuration_data(input_config: json) -> dict:
     """
     Generate the configuation data from a given input_config
-    var: input_config - json file from API containing config data
+    var: input_config - json file from API containing config data]
+    rtn: instance_config_data - internal config based on given input_config
     """
 
     input_config_loaded: dict = json.loads(input_config)
@@ -32,7 +33,7 @@ def generate_instance_configuration_data(input_config: json) -> dict:
     instance_config_data: dict = {
         "env_type": input_config_loaded["env_type"],
         "agent_type": input_config_loaded["agent_type"],
-        "instance_id": input_config_loaded["instance_id"],  # need to work out ID system
+        "instance_id": input_config_loaded["instance_id"],
         "hyper_perameters": input_config_loaded["hyper_perameters"],
         "map_data": {
             "env_map": np.fromstring(map_config["env_map"], dtype=int, sep=",").reshape(
@@ -70,39 +71,3 @@ def generate_instance_configuration_data(input_config: json) -> dict:
         },
     }
     return instance_config_data
-
-
-# def generate_map_configuration_data(map_data: json) -> dict:
-#     """
-#     Format the map_data attributes
-#     env_map from str to numpy array of the given shape
-#     var: map_data - dict from the base input_data
-#     """
-
-#     env_map: np.array = np.fromstring(map_data["env_map"], dtype=int, sep=",").reshape(map_data["map_dimensions"], -1)
-
-#     return {
-#         "env_map": env_map,
-#         "start_location": map_data["start_location"]
-#     }
-
-# def format_brain_config(brain_config: dict) -> dict:
-#     """Format the brain config from dict[str:str] to dict[str:type]"""
-
-#     return {
-#         "input_to_hidden_connections": json.loads(brain_config["input_to_hidden_connections"]),
-#         "hidden_to_output_connections": json.loads(brain_config["hidden_to_output_connections"]),
-#         "brain_type": "",
-#         "brain_id": "",
-#         "fitness": 0.0,
-#         "traversed_path": [],
-#         "fitness_by_step": [],
-#         "current_generation_number": 0,
-#         "functions_callable": {
-#             "weight_init_huristic": WH_Factory.get_huristic(brain_config["weight_init_huristic"]),
-#             "hidden_activation_func": HLA_factory.get_hidden_activation_func(brain_config["hidden_activation_func"]),
-#             "output_activation_func": OLA_factory.get_output_activation_func(brain_config["output_activation_func"],
-#             "new_generation_func": GF_factory.get_generation_func(brain_config["new_generation_func"]),
-#         },
-#         "weights": {"hidden_weights": "", "output_weights": ""},
-#     }

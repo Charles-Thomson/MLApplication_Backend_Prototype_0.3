@@ -4,24 +4,9 @@ from copy import deepcopy
 import random
 import numpy as np
 
-
 from application.lib.agent_brain.static_state_brain import BrainInstance
 
-from application.lib.neural_network.generational_functions.generational_functions_factory import (
-    GenerationalFunctionsFactory,
-)
-from application.lib.neural_network.hidden_layer_activation_functions.hidden_layer_functions_factory import (
-    HiddenLayerActvaitionFactory,
-)
-from application.lib.neural_network.output_layer_activation_functions.output_layer_functions_factory import (
-    OutputLayerActvaitionFactory,
-)
-from application.lib.neural_network.weight_huristics.weight_huristics_factory import (
-    WeightHuristicsFactory,
-)
 
-
-# TODO: Refactor to allow easy access for converting db model to brain instance
 class BrainFactory:
     """
     Brain generation factory
@@ -63,7 +48,7 @@ def base_brain_instance(brain_config: dict, parents=None) -> BrainInstance:
     """
     Return a generic brain instance
     usage - Converting a models.Model back to a brain instance
-    var: brain_config - the config file of the brin instnce
+    var: brain_config - the config file of the brain instance
     var: parents - not used
     rnt: A new Brain Instance
     """
@@ -76,9 +61,13 @@ def base_brain_instance(brain_config: dict, parents=None) -> BrainInstance:
 def new_generational_weighted_brain(
     brain_config: dict, parents: list[BrainInstance]
 ) -> BrainInstance:
-    """Generate a new generationally weighted brain"""
+    """
+    Generate a new generationally weighted brain
+    var: brain_config - the config file of the brain instance
+    var: parents - parent brain instances used to generate new instance
+    """
 
-    MUTATION_THRESHOLD: int = 50
+    mutation_threshold: int = 50
 
     new_generation_function: callable = brain_config["functions_callable"][
         "new_generation_func"
@@ -100,7 +89,7 @@ def new_generational_weighted_brain(
         parent_a.output_weights, parent_b.output_weights
     )
 
-    if random.randint(0, 100) > MUTATION_THRESHOLD:
+    if random.randint(0, 100) > mutation_threshold:
         random_selection = random.randint(0, 1)
         if random_selection == 0:
             new_input_to_hidden_weight = apply_mutation(new_input_to_hidden_weight)
@@ -117,7 +106,11 @@ def new_generational_weighted_brain(
 
 
 def apply_mutation(weight_set: np.array) -> np.array:
-    """Apply a +/- 10% mutation to the weights to give variance"""
+    """
+    Apply a +/- 1-10% mutation to the weights to give variance
+    var: weight_set - set of given weights to be mutated
+    rtn: weight_set - weight_set post mtation
+    """
 
     weight_set_shape: tuple = weight_set.shape
 
@@ -141,16 +134,25 @@ def apply_mutation(weight_set: np.array) -> np.array:
 
 @BrainFactory.register("random_weighted_brain")
 def new_random_weighted_brain(brain_config: dict, parents: list) -> BrainInstance:
-    """Generate a randomly weighted brain"""
+    """
+    Generate a randomly weighted brain
+    var: brain_config - the config file of the brain instance
+    var: parents - unused
+    rtn: BrainInstance - A randomly weight brain instance
+    """
 
     hidden_weights: np.array = initialize_weights(
         layer_connections=brain_config["input_to_hidden_connections"],
-        weight_heuristic=brain_config["functions_callable"]["weight_init_huristic"],
+        weight_heuristic_func=brain_config["functions_callable"][
+            "weight_init_huristic"
+        ],
     )
 
     output_weights: np.array = initialize_weights(
         layer_connections=brain_config["hidden_to_output_connections"],
-        weight_heuristic=brain_config["functions_callable"]["weight_init_huristic"],
+        weight_heuristic_func=brain_config["functions_callable"][
+            "weight_init_huristic"
+        ],
     )
 
     brain_config["weights"]["hidden_weights"] = hidden_weights
@@ -162,13 +164,15 @@ def new_random_weighted_brain(brain_config: dict, parents: list) -> BrainInstanc
 
 
 def initialize_weights(
-    layer_connections: tuple[int, int], weight_heuristic: callable
+    layer_connections: tuple[int, int], weight_heuristic_func: callable
 ) -> np.array:
-    """Generate random weigths between to layers of a specified sizes"""
-
-    # may clean up to return the set weight size not 500
-
-    get_weight = weight_heuristic(layer_connections)
+    """
+    Generate random weigths between to layers of a specified sizes
+    var: layer_connections - number of connections between two layers
+    var: weight_heuristic_func - the init huristic of the weights
+    rtn: rand_weights - Generated weights
+    """
+    get_weight = weight_heuristic_func(layer_connections)
 
     sending_layer, reciving_layer = layer_connections
     rand_weights: np.array = np.array(

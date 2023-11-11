@@ -86,7 +86,7 @@ def run_instance_function_wrapper(
     return deco
 
 
-def run_generation_function_wrapper(
+def alt_run_generation_function_wrapper(
     pre_run_function: Callable,
     post_run_function: Callable,
 ) -> Callable:
@@ -99,14 +99,12 @@ def run_generation_function_wrapper(
         """Decorator"""
 
         @wraps(func)
-        def wrapper(
-            *args,
-            logging_root_file_path,
-            instance_id,
-            with_logging,
-            generation_number,
-            **kwargs,
-        ):
+        def wrapper(*args, **kwargs):
+            logging_root_file_path = kwargs["logging_root_file_path"]
+            instance_id = kwargs["instance_id"]
+            with_logging = kwargs["with_logging"]
+            generation_number = kwargs["generation_number"]
+
             if not with_logging:
                 return func(*args, **kwargs)
 
@@ -125,27 +123,87 @@ def run_generation_function_wrapper(
             )
 
             # log these in a second
-            generation_passed_viability, generation_alphas_brains, all_brains = func(
+            avg_fitness, generation_alphas, sorted_brains, valid_generation = func(
                 *args, **kwargs
             )
 
-            for brain in generation_alphas_brains:
+            for brain in generation_alphas:
                 fit_brains_logger.info(
                     f"generation number: {brain.current_generation_number} - Brain id {brain.brain_id} - Brain fitness {brain.fitness} - Path: {brain.traversed_path}"
                 )
 
-            for this_brain in all_brains:
+            for this_brain in sorted_brains:
                 all_brains_logger.info(
                     f"generation number: {this_brain.current_generation_number} - Brain id {this_brain.brain_id} - Brain fitness {this_brain.fitness} - Path: {this_brain.traversed_path}"
                 )
 
             post_run_function(func, instance_id)
 
-            return generation_passed_viability, generation_alphas_brains, all_brains
+            return avg_fitness, generation_alphas, sorted_brains, valid_generation
 
         return wrapper
 
     return deco
+
+
+# def run_generation_function_wrapper(
+#     pre_run_function: Callable,
+#     post_run_function: Callable,
+# ) -> Callable:
+#     """
+#     Logging wrapper for the run_generation
+#     This will set up the logging folders if needed
+#     """
+
+#     def deco(func: Callable) -> Callable:
+#         """Decorator"""
+
+#         @wraps(func)
+#         def wrapper(*args, **kwargs):
+#             logging_root_file_path = kwargs["logging_root_file_path"]
+#             instance_id = kwargs["instance_id"]
+#             with_logging = kwargs["with_logging"]
+#             generation_number = kwargs["generation_number"]
+
+#             if not with_logging:
+#                 return func(*args, **kwargs)
+
+#             pre_run_function(func, instance_id)
+#             new_generation_instance_logger(
+#                 instance_file_path=logging_root_file_path,
+#                 generation_number=generation_number,
+#                 instance_id=instance_id,
+#             )
+
+#             all_brains_logger = logging.getLogger(
+#                 instance_id + "all_brain_logger" + str(generation_number)
+#             )
+#             fit_brains_logger = logging.getLogger(
+#                 instance_id + "alpha_brain_logger" + str(generation_number)
+#             )
+
+#             # log these in a second
+#             generation_passed_viability, generation_alphas_brains, all_brains = func(
+#                 *args, **kwargs
+#             )
+
+#             for brain in generation_alphas_brains:
+#                 fit_brains_logger.info(
+#                     f"generation number: {brain.current_generation_number} - Brain id {brain.brain_id} - Brain fitness {brain.fitness} - Path: {brain.traversed_path}"
+#                 )
+
+#             for this_brain in all_brains:
+#                 all_brains_logger.info(
+#                     f"generation number: {this_brain.current_generation_number} - Brain id {this_brain.brain_id} - Brain fitness {this_brain.fitness} - Path: {this_brain.traversed_path}"
+#                 )
+
+#             post_run_function(func, instance_id)
+
+#             return generation_passed_viability, generation_alphas_brains, all_brains
+
+#         return wrapper
+
+#     return deco
 
 
 def fitness_threshold_function_wrapper(
@@ -162,12 +220,11 @@ def fitness_threshold_function_wrapper(
         @wraps(func)
         def wrapper(
             *args,
-            logging_root_file_path,
-            instance_id,
-            with_logging,
-            generation_number,
             **kwargs,
         ):
+            instance_id = kwargs["instance_id"]
+            with_logging = kwargs["with_logging"]
+            generation_number = kwargs["generation_number"]
             if not with_logging:
                 new_fitness_threshold = func(*args, **kwargs)
                 return new_fitness_threshold
@@ -195,7 +252,12 @@ run_instance_with_logging = run_instance_function_wrapper(
     post_run_function=run_time_loging_post_call_function,
 )
 
-run_generation_with_logging = run_generation_function_wrapper(
+# run_generation_with_logging = run_generation_function_wrapper(
+#     pre_run_function=run_time_logging_pre_call_function,
+#     post_run_function=run_time_loging_post_call_function,
+# )
+
+alt_run_generation_with_logging = alt_run_generation_function_wrapper(
     pre_run_function=run_time_logging_pre_call_function,
     post_run_function=run_time_loging_post_call_function,
 )

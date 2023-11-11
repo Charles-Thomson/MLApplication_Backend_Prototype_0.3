@@ -47,9 +47,6 @@ from database.internal_use_db_functions.generation_instance_functions import (
 
 from application.lib.agent_brain.brain_factory import BrainFactory
 from application.lib.agent_brain.static_state_brain import BrainInstance
-from application.lib.instance_generation.instance_generation_main import (
-    format_brain_config,
-)
 
 
 class BrainInstanceModelTestCase(TestCase):
@@ -71,17 +68,12 @@ class BrainInstanceModelTestCase(TestCase):
             parents_of_generation=[],
         )
 
-        update_test_data: dict = {
-            "average_fitness": 3.5,
-            "fitness_threshold": 4.0,
-            "generation_alpha_brain": "Brain_2",
-            "generation_size": 2,
-            "parents_of_generation": ["Brain_1", "brain_2"],
-        }
-
         update_generation_model_by_id(
             generation_instance_id=self.generation_instance_id,
-            update_data=update_test_data,
+            average_fitness=3.5,
+            fitness_threshold=4.0,
+            generation_alpha_brain="Brain_2",
+            generation_size=2,
         )
 
     def generate_brain_helper(self, instance_id: str, brain_id: int) -> BrainInstance:

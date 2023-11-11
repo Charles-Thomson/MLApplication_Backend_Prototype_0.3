@@ -1,0 +1,139 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <title>Data Vizualization</title>
+  <link rel="stylesheet"  href="{% static 'style.css' %}"/>
+  <style>
+    html {
+    box-sizing: border-box;
+    font-size: 100%;
+  }
+  
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  
+  body {
+    background-color: white;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  section, aside, div {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  
+  .blue {
+    background-color: blue;
+    
+  }
+  
+  .magenta {
+    background-color: magenta;
+    
+  }
+  
+  .green {
+    background-color: green;
+  }
+
+  .white{
+    background-color: white;
+  }
+
+  .text.black{
+    color: black;
+  }
+  
+  h1 { 
+    font-size: 4rem; 
+  }
+  
+  h2 { 
+    font-size: 3rem; 
+  }
+  
+  h1, h2, h3 {
+    margin-top: 0px;
+  }
+  
+  .flex-container {
+    
+    @media (min-width: 56.25em){
+      display: flex;  
+    }
+  }
+  
+  .main-content {
+    flex: 1;  
+  }
+  
+  .sidebar {
+    flex: 1 0 300px;
+  }
+
+  .internal_flex_data{
+    flex: 1;
+  }
+
+  .internal_flex_map{
+    flex: 0;
+  }
+
+  .board{
+            display: grid;
+            grid-template-columns: repeat(8, 20); /*Number of cols - width of each col  */ 
+            
+            width: 160px;
+            height: 160px;
+            border: 2px solid black;
+        }
+
+  </style>
+  
+</head>
+<body>
+
+  <main class="flex-container">
+
+    <section class="main-content blue">
+      <h2>All Generations</h2>
+      {% for Generation in All_Geneerations_list %}
+      <div class="ui segment white " style="margin-top: 20px;">
+          <div class="flex-container">
+
+              <section class="internal_flex_data">
+                  <p style="color: black; font-weight: bold;"  class="ui big header black ">Generation</p>
+                  <p style="color: black;" class="ui big header black "> Generaion ID: {{ Generation.generation_instance_id }}</p>
+                  <p style="color: black;" class="ui big header black ">Generation Number: {{ Generation.generation_number }}</p>
+                  <p style="color: black;" class="ui big header black ">Average fitness: {{ Generation.average_fitness }}</p>
+                  <p style="color: black;" class="ui big header black ">fitness_threshold: {{ Generation.fitness_threshold }}</p>
+                  <p style="color: black;" class="ui big header black ">generation_size: {{ Generation.generation_size }}</p>
+                  <p style="color: black;" class="ui big header black ">Learning Instance Referance{{ Generation.learning_instance_ref }}</p>
+              </section>
+
+              <section class="internal_flex_map">
+                        
+                
+                    
+                        
+              </section>
+          </div>
+      </div>
+      {% endfor %}
+    </section>
+
+    
+
+  </main>
+
+</body>
+</html>
