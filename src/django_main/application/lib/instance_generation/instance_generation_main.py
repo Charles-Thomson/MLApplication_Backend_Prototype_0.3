@@ -87,13 +87,6 @@ class LearningInstance:
         for current_generation_number in range(self.max_number_of_generations):
             new_generation_id: str = f"{self.instance_id}-{current_generation_number}"
 
-            # agent_generator: object = self.agent_generater_partial(
-            #     instance_id=self.instance_id,
-            #     parents=alpha_brains_from_generation,
-            #     max_generation_size=self.max_generation_size,
-            #     current_generation_number=current_generation_number,
-            # )
-
             alt_agent_generator = self.alt_agent_generator(
                 instance_id=self.instance_id,
                 parents=alpha_brains_from_generation,
@@ -107,21 +100,6 @@ class LearningInstance:
                 parents_of_generation=alpha_brains_from_generation,
                 learning_instance_referance=self.learning_instance_db_ref,
             )
-
-            # (
-            #     generation_viability,
-            #     alpha_brains_from_generation,
-            #     all_brains,
-            # ) = self.run_generation(
-            #     instance_id=self.instance_id,
-            #     with_logging=self.with_logging,
-            #     agent_generator=agent_generator,
-            #     generation_id=new_generation_id,
-            #     fitness_threshold=fitness_threshold,
-            #     generation_db_ref=this_generation_db_ref,
-            #     generation_number=current_generation_number,
-            #     logging_root_file_path=logging_root_file_path,
-            # )
 
             (
                 avg_fitness,
@@ -148,14 +126,6 @@ class LearningInstance:
                 generation_alpha_brain=potential_new_alpha,
                 average_fitness=avg_fitness,
             )
-
-            # update_generation_model_by_id(
-            #     generation_size=len(all_brains),
-            #     fitness_threshold=fitness_threshold,
-            #     generation_instance_id=new_generation_id,
-            #     generation_alpha_brain=potential_new_alpha,
-            #     average_fitness=self.get_generation_fitness_average(parents=all_brains),
-            # )
 
             if not current_alpha_brain:
                 current_alpha_brain = potential_new_alpha
@@ -209,51 +179,6 @@ class LearningInstance:
         )
         map(partial_save, all_brains_post_run)
         return avg_fitness, sorted_brains[:10], sorted_brains, valid_generation
-
-    # @run_generation_with_logging
-    # def run_generation(
-    #     self,
-    #     agent_generator: Generator,
-    #     fitness_threshold: float,
-    #     generation_db_ref: str,
-    #     generation_id: str,
-    #     **kwargs,
-    # ) -> list[BrainInstance]:
-    #     """
-    #     Run a new generation
-    #     var: agent_generator
-    #     rtn: new_parents - A list of brain instances tha pass the fitnees threshold
-    #     """
-    #     all_brains: list = []
-    #     generation_passed_viability: bool = False
-    #     generation_alphas_brains: list[BrainInstance] = []
-
-    #     for agent in agent_generator:
-    #         post_run_agent_brain: object = agent.run_agent()
-    #         all_brains.append(post_run_agent_brain)
-
-    #         save_brain_instance(
-    #             post_run_agent_brain, generation_instance_db_ref=generation_db_ref
-    #         )
-
-    #         if post_run_agent_brain.fitness >= fitness_threshold:
-    #             generation_alphas_brains.append(post_run_agent_brain)
-
-    #         if len(generation_alphas_brains) >= self.new_generation_threshold:
-    #             generation_alphas_brains = sorted(
-    #                 generation_alphas_brains, key=lambda x: x.fitness, reverse=True
-    #             )
-
-    #             generation_passed_viability = True
-
-    #             return generation_passed_viability, generation_alphas_brains, all_brains
-
-    #     # If fails take 10 best brains
-    #     generation_alphas_brains = sorted(
-    #         all_brains, key=lambda x: x.fitness, reverse=True
-    #     )[:10]
-
-    #     return generation_passed_viability, generation_alphas_brains, all_brains
 
     @generate_fitness_threshold_with_logging
     def generate_new_fitness_threshold(

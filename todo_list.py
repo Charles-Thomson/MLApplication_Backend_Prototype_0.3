@@ -1,5 +1,20 @@
 # TODO Today:
 
+
+# This week
+# Monday
+# - Finish the back end and push in a workign state
+# - Inc clearning up all undeeded code and files
+# Have a look at the object creation used by GQL and is it needed in this scenario?
+
+# Tuesday
+# - Start a c# .NET project
+# Make the following
+# - input and return
+# Calculator
+# Object Generator with alteration to obj
+
+
 # Before lunch
 # 1. File by file - clean up and refactor down
 
